@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Роман Тарнакин](https://up.htmlacademy.ru/javascript/22/user/1531661).
-* Наставник: `Вадим Новаш`.
+* Наставник: [Вадим Новаш](https://htmlacademy.ru/profile/stakeout).
 
 ---
 
