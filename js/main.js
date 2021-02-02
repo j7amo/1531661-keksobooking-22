@@ -11,7 +11,7 @@ const getRandomInt = (rangeStart = 0, rangeEnd = 0) => {
     return rangeStart;
   }
 
-  return +rangeStart + Math.round(Math.random() * (rangeEnd - rangeStart));
+  return Number(rangeStart) + Math.round(Math.random() * (rangeEnd - rangeStart));
 };
 
 getRandomInt();
@@ -25,7 +25,7 @@ const getRandomFloat = (rangeStart = 0, rangeEnd = 0, digitsAfterPoint = 2) => {
     return rangeStart;
   }
 
-  return (+rangeStart + Math.random() * (rangeEnd - rangeStart)).toFixed(digitsAfterPoint);
+  return (Number(rangeStart) + Math.random() * (rangeEnd - rangeStart)).toFixed(digitsAfterPoint);
 };
 
 getRandomFloat();
