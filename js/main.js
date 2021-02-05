@@ -68,11 +68,11 @@ const getRandomElement = (array) => {
 //    - возвращать новый случайной длины.
 // При этом элементы массива должны быть уникальны, то есть НЕ повторяться.
 const getRandomLengthArray = (array) => {
-  let randomLengthArray = [];
+  const randomLengthArray = [];
   const randomLength = getRandomInt(1, array.length);
 
   while(randomLengthArray.length < randomLength) {
-    let randomElement = getRandomElement(array);
+    const randomElement = getRandomElement(array);
 
     if (!randomLengthArray.includes(randomElement)) {
       randomLengthArray.push(randomElement);
@@ -90,7 +90,7 @@ const generateRentOffer = () => {
 
   return {
     author: {
-      avatar: `img/avatars/user${'0' + getRandomInt(1, 8)}.png`,
+      avatar: `img/avatars/user0${getRandomInt(1, 8)}.png`,
     },
     offer: {
       title: OFFER_TITLE,
@@ -114,7 +114,7 @@ const generateRentOffer = () => {
 
 // 5) объявим утилитарную функцию, которая добавит сгенерированные объекты в массив и вернёт его
 const getGeneratedOffers = () => {
-  let generatedOffers = [];
+  const generatedOffers = [];
 
   for(let i = 0; i < GENERATED_OBJECTS_COUNT; i++) {
     generatedOffers.push(generateRentOffer());
