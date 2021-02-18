@@ -13,23 +13,40 @@ const offerTemplate = offerTemplateContent.querySelector('.popup');
 // клонируем ОДИН (пока один для тестирования) элемент и дальше "пляшем" от него
 const elementFromOfferTemplate = offerTemplate.cloneNode(true);
 
-// создайте DOM-элементы, соответствующие объявлениям, и заполните их данными:
+// создайте DOM-элементы, соответствующие объявлениям, и заполните их данными
+// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается.
+// Напишем для этого функцию, которая проверяет undefined ли свойство и в зависимости от результата либо скрывает элемент,
+// либо сэтит то, что нам надо:
+const setObjectWithPropertyCheck = (resultingObject, objectPropertyToSet, objectPropertyToCheck) => {
+  if(objectPropertyToCheck === undefined || objectPropertyToCheck.contains('undefined')) {
+    resultingObject.classList.add('hidden');
+  } else {
+    resultingObject[objectPropertyToSet] = objectPropertyToCheck;
+  }
+};
 
 // 1) Выведите заголовок объявления offer.title в заголовок .popup__title.
 const popupTitle = elementFromOfferTemplate.querySelector('.popup__title');
-if(generatedOffers[0].offer.title === '') {
-  
+setObjectWithPropertyCheck(popupTitle, 'textContent', generatedOffers[0].offer.title);
+
+/*
+if(generatedOffers[0].offer.title === undefined) {
+  popupTitle.classList.add('hidden');
 } else {
   popupTitle.textContent = generatedOffers[0].offer.title;
-}
+}*/
 
 // 2) Выведите адрес offer.address в блок .popup__text--address.
 const popupTextAddress = elementFromOfferTemplate.querySelector('.popup__text--address');
-popupTextAddress.textContent = generatedOffers[0].offer.address;
+setObjectWithPropertyCheck(popupTextAddress, 'textContent',  generatedOffers[0].offer.address);
+
+// popupTextAddress.textContent = generatedOffers[0].offer.address;
 
 // 3) Выведите цену offer.price в блок .popup__text--price строкой вида {{offer.price}} ₽/ночь. Например, «5200 ₽/ночь».
 const popupTextPrice = elementFromOfferTemplate.querySelector('.popup__text--price');
-popupTextPrice.textContent = `${generatedOffers[0].offer.price} \u20BD/ночь`;
+setObjectWithPropertyCheck(popupTextPrice, 'textContent',`${generatedOffers[0].offer.price} \u20BD/ночь`);
+
+//popupTextPrice.textContent = `${generatedOffers[0].offer.price} \u20BD/ночь`;
 
 // 4) В блок .popup__type выведите тип жилья offer.type, сопоставив с подписями:
 // Квартира для flat
@@ -37,7 +54,7 @@ popupTextPrice.textContent = `${generatedOffers[0].offer.price} \u20BD/ночь`
 // Дом для house
 // Дворец для palace
 const popupType = elementFromOfferTemplate.querySelector('.popup__type');
-popupType.textContent = (() => {
+const offerType = () => {
   switch(generatedOffers[0].offer.type) {
     case 'flat':
       return 'Квартира';
@@ -48,17 +65,22 @@ popupType.textContent = (() => {
     case 'palace':
       return 'Дворец';
   }
-})();
+};
+setObjectWithPropertyCheck(popupType, 'textContent', offerType());
 
 // 5) Выведите количество гостей и комнат offer.rooms и offer.guests в блок .popup__text--capacity
 // строкой вида {{offer.rooms}} комнаты для {{offer.guests}} гостей. Например, «2 комнаты для 3 гостей».
 const popupTextCapacity = elementFromOfferTemplate.querySelector('.popup__text--capacity');
-popupTextCapacity.textContent = `${generatedOffers[0].offer.rooms} комнаты для ${generatedOffers[0].offer.guests} гостей`;
+setObjectWithPropertyCheck(popupTextCapacity, 'textContent', `${generatedOffers[0].offer.rooms} комнаты для ${generatedOffers[0].offer.guests} гостей`);
+
+// popupTextCapacity.textContent = `${generatedOffers[0].offer.rooms} комнаты для ${generatedOffers[0].offer.guests} гостей`;
 
 // 6) Время заезда и выезда offer.checkin и offer.checkout в блок .popup__text--time строкой
 // вида Заезд после {{offer.checkin}}, выезд до {{offer.checkout}}. Например, «Заезд после 14:00, выезд до 14:00».
 const popupTextTime = elementFromOfferTemplate.querySelector('.popup__text--time');
-popupTextTime.textContent = `Заезд после ${generatedOffers[0].offer.checkin}, выезд до ${generatedOffers[0].offer.checkout}`;
+setObjectWithPropertyCheck(popupTextTime, 'textContent', `Заезд после ${generatedOffers[0].offer.checkin}, выезд до ${generatedOffers[0].offer.checkout}`);
+
+// popupTextTime.textContent = `Заезд после ${generatedOffers[0].offer.checkin}, выезд до ${generatedOffers[0].offer.checkout}`;
 
 // 7) В список .popup__features выведите все доступные удобства в объявлении.
 const popupFeatures = elementFromOfferTemplate.querySelector('.popup__features');
@@ -100,7 +122,9 @@ for(let feature of popupFeatures.children) {
 
 // 8) В блок .popup__description выведите описание объекта недвижимости offer.description.
 const popupDescription = elementFromOfferTemplate.querySelector('.popup__description');
-popupDescription.textContent = generatedOffers[0].offer.description;
+setObjectWithPropertyCheck(popupDescription, 'textContent', generatedOffers[0].offer.description);
+
+// popupDescription.textContent = generatedOffers[0].offer.description;
 
 // 9) В блок .popup__photos выведите все фотографии из списка offer.photos.
 // Каждая из строк массива photos должна записываться как src соответствующего изображения.
@@ -111,7 +135,9 @@ const popupPhotos = elementFromOfferTemplate.querySelector('.popup__photos');
 // но небольшая "засада" заключается в том, что у нас уже при клонировании есть один элемент img,
 // а следовательно его атрибут мы должны засэтить отдельно
 const popupPhotoFirst = popupPhotos.querySelector('.popup__photo');
-popupPhotoFirst.src = generatedOffers[0].offer.photos[0];
+setObjectWithPropertyCheck(popupPhotoFirst, 'src', generatedOffers[0].offer.photos[0]);
+
+// popupPhotoFirst.src = generatedOffers[0].offer.photos[0];
 
 // а остальные элементы можно обработать в цикле (клонирование -> заполнение атрибута -> добавление элемента родителю)
 for(let i = 1; i < generatedOffers[0].offer.photos.length - 1; i++) {
@@ -123,5 +149,11 @@ for(let i = 1; i < generatedOffers[0].offer.photos.length - 1; i++) {
 // 10) Замените src у аватарки пользователя — изображения, которое записано в .popup__avatar —
 // на значения поля author.avatar отрисовываемого объекта.
 const popupAvatar = elementFromOfferTemplate.querySelector('.popup__avatar');
-popupAvatar.src = generatedOffers[0].author.avatar;
+setObjectWithPropertyCheck(popupAvatar, 'src', generatedOffers[0].author.avatar);
 
+// popupAvatar.src = generatedOffers[0].author.avatar;
+
+// 11) Отрисуйте один, например первый, из сгенерированных DOM-элементов в блок .map-canvas,
+// чтобы проверить, что данные в разметку были вставлены корректно.
+const mapCanvas = document.querySelector('#map-canvas');
+mapCanvas.appendChild(elementFromOfferTemplate);
