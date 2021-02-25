@@ -12,12 +12,15 @@ const offerTypes = {
 };
 
 // функция для проверки присутствия элемента массива удобств в классах элемента списка popup__features
-const isIncluded = (clonedFeature, generatedFeatures) => generatedFeatures.some((element) => clonedFeature.className.includes(element));
+const isIncluded = (clonedFeature, generatedFeatures) => generatedFeatures.some((element) => clonedFeature.className.includes(`--${element}`));
 
 // функция для проверки элементов списка popup__features
 // если такого удобства в сгенерированном оффере нет - удаляем лишку нафиг
-const checkFeatures = (clonedFeatures, generatedFeatures) => {
-  for(let i = clonedFeatures.length - 1; i >= 0; i--) {
+const createFeatures = (clonedFeatures, generatedFeatures) => {
+  const limit = clonedFeatures.length - 1;
+
+  // замена на forEach мне не видится возможной из-за того, что перебор значений нисходящий
+  for(let i = limit; i >= 0; i--) {
     if(!isIncluded(clonedFeatures[i], generatedFeatures)) {
       clonedFeatures[i].remove();
     }
@@ -26,70 +29,73 @@ const checkFeatures = (clonedFeatures, generatedFeatures) => {
 
 // функция для создания элемента img с правильным src
 const createPhoto = (photosContainer, photoTemplate, photos) => {
-  for(let i = 1; i < photos.length - 1; i++) {
+  const limit = photos.length;
+  const fragment = document.createDocumentFragment();
+
+  // специально попробовал через forEach, но в этом конкретном случае мы перебираем не все элементы массива, поэтому не работает
+  // photos.forEach((photo) => {
+  //   const popupPhoto = photoTemplate.cloneNode(true);
+  //   popupPhoto.src = photo;
+  //   fragment.append(popupPhoto);
+  // });
+
+  for(let i = 1; i < limit; i++) {
     const popupPhoto = photoTemplate.cloneNode(true);
     popupPhoto.src = photos[i];
-    photosContainer.appendChild(popupPhoto);
+    fragment.append(popupPhoto);
   }
+
+  photosContainer.append(fragment);
 };
 
 // функция для создания попапа
 const createPopup = (template, offer) => {
   const popup = template.cloneNode(true);
   const popupTitle = popup.querySelector('.popup__title');
-  const offerTitle = offer.offer.title;
-  popupTitle.textContent = offerTitle ? offerTitle : popupTitle.remove();
   const popupTextAddress = popup.querySelector('.popup__text--address');
-  const offerAddress = offer.offer.address;
-  popupTextAddress.textContent = offerAddress ? offerAddress : popupTextAddress.remove();
   const popupTextPrice = popup.querySelector('.popup__text--price');
-  const offerPrice = offer.offer.price;
-  popupTextPrice.textContent = offerPrice ? `${offerPrice} \u20BD/ночь` : popupTextPrice.remove();
   const popupType = popup.querySelector('.popup__type');
-  const offerType = offer.offer.type;
-  popupType.textContent = offerTypes[offerType];
   const popupTextCapacity = popup.querySelector('.popup__text--capacity');
-  const offerRooms = offer.offer.rooms;
-  const offerGuests = offer.offer.guests;
-  popupTextCapacity.textContent = offerRooms && offerGuests ? `${offerRooms} комнаты для ${offerGuests} гостей` : popupTextCapacity.remove();
   const popupTextTime = popup.querySelector('.popup__text--time');
-  const offerCheckin = offer.offer.checkin;
-  const offerCheckout = offer.offer.checkout;
-  popupTextTime.textContent = offerCheckin && offerCheckout ? `Заезд после ${offerCheckin}, выезд до ${offerCheckout}` : popupTextTime.remove();
   const popupFeatures = popup.querySelector('.popup__features');
-
-  checkFeatures(popupFeatures.children, offer.offer.features);
-
   const popupDescription = popup.querySelector('.popup__description');
-  const offerDescription = offer.offer.description;
-  popupDescription.textContent = offerDescription ? offerDescription : popupDescription.remove();
   const popupPhotos = popup.querySelector('.popup__photos');
   const popupPhotoFirst = popupPhotos.querySelector('.popup__photo');
-  const offerPhotos = offer.offer.photos;
-  popupPhotoFirst.src = offerPhotos[0] ? offerPhotos[0] : popupPhotoFirst.remove();
-
-  createPhoto(popupPhotos, popupPhotoFirst, offer.offer.photos);
-
   const popupAvatar = popup.querySelector('.popup__avatar');
+  // 11 строк заменил на 2 (одна из них довольно длинная получилась)
+  const innerOfferObject = offer.offer;
+  const {title: offerTitle, address: offerAddress, price: offerPrice, type: offerType, rooms: offerRooms, guests: offerGuests, checkin: offerCheckin, checkout: offerCheckout, features: offerFeatures, description: offerDescription, photos: offerPhotos} = innerOfferObject;
   const offerAvatar = offer.author.avatar;
+
+  popupTitle.textContent = offerTitle ? offerTitle : popupTitle.remove();
+  popupTextAddress.textContent = offerAddress ? offerAddress : popupTextAddress.remove();
+  popupTextPrice.textContent = offerPrice ? `${offerPrice} \u20BD/ночь` : popupTextPrice.remove();
+  popupType.textContent = offerTypes[offerType];
+  popupTextCapacity.textContent = offerRooms && offerGuests ? `${offerRooms} комнаты для ${offerGuests} гостей` : popupTextCapacity.remove();
+  popupTextTime.textContent = offerCheckin && offerCheckout ? `Заезд после ${offerCheckin}, выезд до ${offerCheckout}` : popupTextTime.remove();
+  createFeatures(popupFeatures.children, offerFeatures);
+  popupDescription.textContent = offerDescription ? offerDescription : popupDescription.remove();
+  popupPhotoFirst.src = offerPhotos[0] ? offerPhotos[0] : popupPhotoFirst.remove();
+  popupPhotoFirst ? createPhoto(popupPhotos, popupPhotoFirst, offerPhotos) : popupPhotos.remove();
   popupAvatar.src = offerAvatar ? offerAvatar : popupAvatar.remove();
 
   return popup;
 };
 
 // функция для создания массива попапов
-const createPopupArrayFromGeneratedOffers = (offers) => {
-  const popupArray = [];
+const createPopupsFromOffers = (offers) => {
+  const popups = [];
 
-  for(let i = 0; i < offers.length; i++) {
-    const popup = createPopup(template, offers[i]);
-    popupArray.push(popup);
-  }
+  // единственный цикл, который удалось заменить на forEach
+  offers.forEach((offer) => {
+    const popup = createPopup(template, offer);
+    popups.push(popup);
+  });
 
-  return popupArray;
+  return popups;
 };
 
-const popups = createPopupArrayFromGeneratedOffers(offers);
+const popups = createPopupsFromOffers(offers);
 
 const mapCanvas = document.querySelector('#map-canvas');
-mapCanvas.appendChild(popups[0]);
+mapCanvas.append(popups[0]);
