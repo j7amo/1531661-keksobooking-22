@@ -17,34 +17,24 @@ const isIncluded = (clonedFeature, generatedFeatures) => generatedFeatures.some(
 // функция для проверки элементов списка popup__features
 // если такого удобства в сгенерированном оффере нет - удаляем лишку нафиг
 const createFeatures = (clonedFeatures, generatedFeatures) => {
-  const limit = clonedFeatures.length - 1;
-
-  // замена на forEach мне не видится возможной из-за того, что перебор значений нисходящий
-  for(let i = limit; i >= 0; i--) {
-    if(!isIncluded(clonedFeatures[i], generatedFeatures)) {
-      clonedFeatures[i].remove();
+  clonedFeatures.forEach((clonedFeature) => {
+    if(!isIncluded(clonedFeature, generatedFeatures)) {
+      clonedFeature.remove();
     }
-  }
+  });
 };
 
 // функция для создания элемента img с правильным src
-const createPhoto = (photosContainer, photoTemplate, photos) => {
-  const limit = photos.length;
+const createPhotos = (photosContainer, photoTemplate, photos) => {
   const fragment = document.createDocumentFragment();
 
-  // специально попробовал через forEach, но в этом конкретном случае мы перебираем не все элементы массива, поэтому не работает
-  // photos.forEach((photo) => {
-  //   const popupPhoto = photoTemplate.cloneNode(true);
-  //   popupPhoto.src = photo;
-  //   fragment.append(popupPhoto);
-  // });
-
-  for(let i = 1; i < limit; i++) {
+  photos.forEach((photo) => {
     const popupPhoto = photoTemplate.cloneNode(true);
-    popupPhoto.src = photos[i];
+    popupPhoto.src = photo;
     fragment.append(popupPhoto);
-  }
+  });
 
+  photoTemplate.remove();
   photosContainer.append(fragment);
 };
 
@@ -57,15 +47,30 @@ const createPopup = (template, offer) => {
   const popupType = popup.querySelector('.popup__type');
   const popupTextCapacity = popup.querySelector('.popup__text--capacity');
   const popupTextTime = popup.querySelector('.popup__text--time');
-  const popupFeatures = popup.querySelector('.popup__features');
+  const popupFeatures = popup.querySelector('.popup__features').querySelectorAll('li');
   const popupDescription = popup.querySelector('.popup__description');
   const popupPhotos = popup.querySelector('.popup__photos');
   const popupPhotoFirst = popupPhotos.querySelector('.popup__photo');
   const popupAvatar = popup.querySelector('.popup__avatar');
-  // 11 строк заменил на 2 (одна из них довольно длинная получилась)
-  const innerOfferObject = offer.offer;
-  const {title: offerTitle, address: offerAddress, price: offerPrice, type: offerType, rooms: offerRooms, guests: offerGuests, checkin: offerCheckin, checkout: offerCheckout, features: offerFeatures, description: offerDescription, photos: offerPhotos} = innerOfferObject;
-  const offerAvatar = offer.author.avatar;
+
+  const {
+    offer: {
+      title: offerTitle,
+      address: offerAddress,
+      price: offerPrice,
+      type: offerType,
+      rooms: offerRooms,
+      guests: offerGuests,
+      checkin: offerCheckin,
+      checkout: offerCheckout,
+      features: offerFeatures,
+      description: offerDescription,
+      photos: offerPhotos,
+    },
+    author: {
+      avatar: offerAvatar,
+    },
+  } = offer;
 
   popupTitle.textContent = offerTitle ? offerTitle : popupTitle.remove();
   popupTextAddress.textContent = offerAddress ? offerAddress : popupTextAddress.remove();
@@ -73,10 +78,9 @@ const createPopup = (template, offer) => {
   popupType.textContent = offerTypes[offerType];
   popupTextCapacity.textContent = offerRooms && offerGuests ? `${offerRooms} комнаты для ${offerGuests} гостей` : popupTextCapacity.remove();
   popupTextTime.textContent = offerCheckin && offerCheckout ? `Заезд после ${offerCheckin}, выезд до ${offerCheckout}` : popupTextTime.remove();
-  createFeatures(popupFeatures.children, offerFeatures);
+  createFeatures(popupFeatures, offerFeatures);
   popupDescription.textContent = offerDescription ? offerDescription : popupDescription.remove();
-  popupPhotoFirst.src = offerPhotos[0] ? offerPhotos[0] : popupPhotoFirst.remove();
-  popupPhotoFirst ? createPhoto(popupPhotos, popupPhotoFirst, offerPhotos) : popupPhotos.remove();
+  createPhotos(popupPhotos, popupPhotoFirst, offerPhotos);
   popupAvatar.src = offerAvatar ? offerAvatar : popupAvatar.remove();
 
   return popup;
@@ -86,7 +90,6 @@ const createPopup = (template, offer) => {
 const createPopupsFromOffers = (offers) => {
   const popups = [];
 
-  // единственный цикл, который удалось заменить на forEach
   offers.forEach((offer) => {
     const popup = createPopup(template, offer);
     popups.push(popup);
