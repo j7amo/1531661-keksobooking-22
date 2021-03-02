@@ -101,4 +101,3 @@ const createPopupsFromOffers = (offers) => {
 const popups = createPopupsFromOffers(offers);
 
 const mapCanvas = document.querySelector('#map-canvas');
-mapCanvas.append(popups[0]);
