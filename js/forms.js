@@ -1,5 +1,7 @@
 // это файл для работы с формами .ad-form и .map__filters
 // здесь мы будем переводить их в неактивное состояние и наоборот
+// импортируем объект карты для того, чтобы работать с формами с учётом состояния этого объекта
+import { map, mainPinMarker } from './map.js';
 
 // найдём эти элементы в DOM'е для последующей работы с ними
 const mapFiltersForm = document.querySelector('.map__filters');
@@ -23,3 +25,34 @@ mapFiltersSelects.forEach((element) => {
   element.disabled = true;
 });
 mapFiltersFieldset.disabled = true;
+
+// далее после загрузки карты мы должны на странице вернуть активное состояние заблокированным формам
+// сделаем это с помощью метода whenReady (пробовал сначала через map.on('load', cb), но не получилось, возможно потому,
+// что событие происходит слишком быстро и в тот момент, когда мы пытаемся его отловить - оно не происходит уже)
+map.whenReady(() => {
+  adForm.classList.remove('ad-form--disabled');
+  adFormFieldsets.forEach((element) => {
+    element.disabled = false;
+  });
+  mapFiltersForm.classList.remove('map__filters--disabled');
+  mapFiltersSelects.forEach((element) => {
+    element.disabled = false;
+  });
+  mapFiltersFieldset.disabled = false;
+});
+
+// далее реализуем выбор адреса путём перемещения главной метки
+// для этого подпишемся на событие moveend метки и будем получать объект с новыми координатами
+// эти координаты будем записывать в значение соответствующего инпута формы
+
+// найдём сначала этот инпут
+const addressInputField = adForm.querySelector('input[name = "address"]');
+
+// пропишем ему аттрибут readonly (согласно ТЗ к ДЗ=) ручками мы не можем тут лазить)
+addressInputField.readOnly = true;
+
+// подписываемся и записываем новые координаты
+mainPinMarker.on('moveend', (evt) => {
+  let newCoordinatesObject = evt.target.getLatLng();
+  addressInputField.value = `${newCoordinatesObject.lat.toFixed(4)}, ${newCoordinatesObject.lng.toFixed(4)}`;
+});

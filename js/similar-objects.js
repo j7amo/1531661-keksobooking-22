@@ -99,5 +99,3 @@ const createPopupsFromOffers = (offers) => {
 };
 
 const popups = createPopupsFromOffers(offers);
-
-const mapCanvas = document.querySelector('#map-canvas');
