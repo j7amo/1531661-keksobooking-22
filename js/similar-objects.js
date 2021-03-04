@@ -86,7 +86,8 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
-// функция для создания массива попапов
+// функция для создания массива попапов (возвращает массив объектов, которые ещё надо ДОБАВИТЬ на страницу)
+// Примечание: данная функция нам по идее в дальнейшем будет не нужна, но это не точно =)
 const createPopupsFromOffers = (offers) => {
   const popups = [];
 
@@ -98,4 +99,20 @@ const createPopupsFromOffers = (offers) => {
   return popups;
 };
 
+// получим массив попапов
 const popups = createPopupsFromOffers(offers);
+
+// получим массив объектов с координатами
+const locations = [];
+offers.forEach((offer) => {
+  locations.push(offer.location);
+});
+
+// сделаем мапу с парами ПОПАП - КООРДИНАТЫ, чтобы было удобно потом добавлять метки на карту
+const popupsWithCoordinates = new Map();
+for (let i = 0; i < popups.length; i++) {
+  popupsWithCoordinates.set(popups[i], locations[i]);
+}
+
+// отдадим наружу мапу для добавления меток на карту
+export { popupsWithCoordinates };

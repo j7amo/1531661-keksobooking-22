@@ -26,9 +26,17 @@ mapFiltersSelects.forEach((element) => {
 });
 mapFiltersFieldset.disabled = true;
 
-// далее после загрузки карты мы должны на странице вернуть активное состояние заблокированным формам
+// далее после загрузки карты мы должны на странице вернуть активное состояние заблокированным формам, а также сразу проставить
+// начальные координаты главной метки (центр Токио) в поле ввода адреса
 // сделаем это с помощью метода whenReady (пробовал сначала через map.on('load', cb), но не получилось, возможно потому,
 // что событие происходит слишком быстро и в тот момент, когда мы пытаемся его отловить - оно не происходит уже)
+
+// найдём этот инпут
+const addressInputField = adForm.querySelector('input[name = "address"]');
+
+// пропишем ему аттрибут readonly (согласно ТЗ к ДЗ=) ручками мы не можем тут лазить)
+addressInputField.readOnly = true;
+
 map.whenReady(() => {
   adForm.classList.remove('ad-form--disabled');
   adFormFieldsets.forEach((element) => {
@@ -39,20 +47,19 @@ map.whenReady(() => {
     element.disabled = false;
   });
   mapFiltersFieldset.disabled = false;
+  const latitude = mainPinMarker.getLatLng().lat.toFixed(5);
+  const longitude = mainPinMarker.getLatLng().lng.toFixed(5);
+  addressInputField.value = `${latitude}, ${longitude}`;
 });
 
 // далее реализуем выбор адреса путём перемещения главной метки
 // для этого подпишемся на событие moveend метки и будем получать объект с новыми координатами
 // эти координаты будем записывать в значение соответствующего инпута формы
-
-// найдём сначала этот инпут
-const addressInputField = adForm.querySelector('input[name = "address"]');
-
-// пропишем ему аттрибут readonly (согласно ТЗ к ДЗ=) ручками мы не можем тут лазить)
-addressInputField.readOnly = true;
-
 // подписываемся и записываем новые координаты
+// примечание:
+// тут есть странный момент: в ТЗ сказано, что координаты якобы должны ОКРУГЛЯТЬСЯ, но это довольно нетривиальная задача,
+// поэтому пока ограничимся простой обрезкой числа через toFixed
 mainPinMarker.on('moveend', (evt) => {
   let newCoordinatesObject = evt.target.getLatLng();
-  addressInputField.value = `${newCoordinatesObject.lat.toFixed(4)}, ${newCoordinatesObject.lng.toFixed(4)}`;
+  addressInputField.value = `${newCoordinatesObject.lat.toFixed(5)}, ${newCoordinatesObject.lng.toFixed(5)}`;
 });
