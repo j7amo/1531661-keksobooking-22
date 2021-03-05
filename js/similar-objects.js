@@ -1,7 +1,6 @@
-import { getGeneratedOffers } from './data.js';
-
-const offers = getGeneratedOffers();
 const template = document.querySelector('#card').content.querySelector('.popup');
+
+import { getGeneratedOffers } from './data.js';
 
 // словарь видов размещения
 const offerTypes = {
@@ -86,33 +85,22 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
-// функция для создания массива попапов (возвращает массив объектов, которые ещё надо ДОБАВИТЬ на страницу)
-// Примечание: данная функция нам по идее в дальнейшем будет не нужна, но это не точно =)
-const createPopupsFromOffers = (offers) => {
-  const popups = [];
-
+// функция для создания попапов с координатами (источник данных может быть как сгенерирован на клиенте, так и получен с сервера)
+// Эта функция создаёт и возвращает мапу (объект типа Map), в которой
+// KEY = HTMLElement (сделанный на основе шаблона попап, готовый к добавлению в балун метки карты)
+// VALUE = объект с координатами, которые мы используем для правильного размещения меток объявлений на карте
+const createMapOfPopupsWithCoordinates = (offers) => {
+  const popupsWithCoordinates = new Map();
   offers.forEach((offer) => {
     const popup = createPopup(template, offer);
-    popups.push(popup);
+    const location = offer.location;
+    popupsWithCoordinates.set(popup, location);
   });
 
-  return popups;
+  return popupsWithCoordinates;
 };
 
-// получим массив попапов
-const popups = createPopupsFromOffers(offers);
-
-// получим массив объектов с координатами
-const locations = [];
-offers.forEach((offer) => {
-  locations.push(offer.location);
-});
-
-// сделаем мапу с парами ПОПАП - КООРДИНАТЫ, чтобы было удобно потом добавлять метки на карту
-const popupsWithCoordinates = new Map();
-for (let i = 0; i < popups.length; i++) {
-  popupsWithCoordinates.set(popups[i], locations[i]);
-}
+const mapOfPopupsWithCoordinates = createMapOfPopupsWithCoordinates(getGeneratedOffers());
 
 // отдадим наружу мапу для добавления меток на карту
-export { popupsWithCoordinates };
+export { mapOfPopupsWithCoordinates };
