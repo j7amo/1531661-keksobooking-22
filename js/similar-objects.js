@@ -1,6 +1,3 @@
-import { getGeneratedOffers } from './data.js';
-
-const offers = getGeneratedOffers();
 const template = document.querySelector('#card').content.querySelector('.popup');
 
 // словарь видов размещения
@@ -86,19 +83,19 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
-// функция для создания массива попапов
-const createPopupsFromOffers = (offers) => {
-  const popups = [];
-
+// функция для создания попапов с координатами (источник данных может быть как сгенерирован на клиенте, так и получен с сервера)
+// Эта функция создаёт и возвращает мапу (объект типа Map), в которой
+// KEY = HTMLElement (сделанный на основе шаблона попап, готовый к добавлению в балун метки карты)
+// VALUE = объект с координатами, которые мы используем для правильного размещения меток объявлений на карте
+const createMapOfPopupsWithCoordinates = (offers) => {
+  const popupsWithCoordinates = new Map();
   offers.forEach((offer) => {
     const popup = createPopup(template, offer);
-    popups.push(popup);
+    const location = offer.location;
+    popupsWithCoordinates.set(popup, location);
   });
 
-  return popups;
+  return popupsWithCoordinates;
 };
 
-const popups = createPopupsFromOffers(offers);
-
-const mapCanvas = document.querySelector('#map-canvas');
-mapCanvas.append(popups[0]);
+export { createMapOfPopupsWithCoordinates };
