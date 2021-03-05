@@ -19,7 +19,7 @@ const initializeMap = () => {
     .setView({
       lat: 35.65283,
       lng: 139.83947,
-    }, 12);
+    }, 9);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -61,8 +61,8 @@ const addOffersMarkersToMap = (popupsWithCoordinates, map) => {
   popupsWithCoordinates.forEach((value, key) => {
     L.marker(
       {
-        lat: value.x,
-        lng: value.y,
+        lat: value.lat,
+        lng: value.lng,
       },
       {
         draggable: false,

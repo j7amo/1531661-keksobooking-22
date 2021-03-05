@@ -1,7 +1,5 @@
 const template = document.querySelector('#card').content.querySelector('.popup');
 
-import { getGeneratedOffers } from './data.js';
-
 // словарь видов размещения
 const offerTypes = {
   flat: 'Квартира',
@@ -100,7 +98,4 @@ const createMapOfPopupsWithCoordinates = (offers) => {
   return popupsWithCoordinates;
 };
 
-const mapOfPopupsWithCoordinates = createMapOfPopupsWithCoordinates(getGeneratedOffers());
-
-// отдадим наружу мапу для добавления меток на карту
-export { mapOfPopupsWithCoordinates };
+export { createMapOfPopupsWithCoordinates };

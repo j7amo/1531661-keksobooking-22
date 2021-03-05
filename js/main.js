@@ -1,7 +1,8 @@
 // точка входа, связывающая другие модули
 import { enableForms, disableForms, initializeAddressInputField, addMoveEndListenerToMarker } from './forms.js';
 import { initializeMap, addOffersMarkersToMap } from './map.js';
-import { mapOfPopupsWithCoordinates } from './similar-objects.js';
+import { createMapOfPopupsWithCoordinates } from './similar-objects.js';
+import {getDataFromServer, showAlert} from './server-api.js';
 
 // теперь попробуем собрать из этих кубиков работающую программу
 disableForms();
@@ -10,5 +11,14 @@ map.whenReady(() => {
   enableForms();
   initializeAddressInputField(mainPinMarker);
   addMoveEndListenerToMarker(mainPinMarker);
-  addOffersMarkersToMap(mapOfPopupsWithCoordinates, map)
+  getDataFromServer(
+    (json) => {
+      return json;
+    },
+    () => {
+      showAlert('При работе с сервером произошла ошибка');
+    },
+  )
+    .then((json) => createMapOfPopupsWithCoordinates(json))
+    .then((popupsWithCoordinates) => addOffersMarkersToMap(popupsWithCoordinates, map))
 });
