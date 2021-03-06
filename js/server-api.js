@@ -27,38 +27,30 @@ const getDataFromServer = (onSuccess, onFail) => {
 };
 
 // 2) Функция отправки данных на сервер
-const sendDataToServer = (onSuccess, onFail, body) => {
-  fetch(
-    'https://22.javascript.pages.academy/keksobooking/data',
-    {
-      method: 'POST',
-      body,
-    },
-  )
-    .then((response) => {
-      if (response.ok) {
-        onSuccess();
-      } else {
-        onFail('Не удалось отправить форму. Попробуйте ещё раз');
-      }
-    })
-    .catch(() => {
-      onFail('Не удалось отправить форму. Попробуйте ещё раз');
-    });
-};
-
-const fetchPost = () => {
+const sendDataToServer = (onFail, form) => {
   fetch(
     'https://22.javascript.pages.academy/keksobooking',
     {
       method: 'POST',
       credentials: 'same-origin',
-      body: new FormData(),
+      body: new FormData(form),
     },
   )
-    .then((response) => response.json())
+    .then(response => {
+      console.log(response.ok);
+      console.log(response.status);
+      console.log(response.statusText);
+      if (response.ok) {
+        return response.json();
+      }
+
+      throw new Error(`${response.status} ${response.statusText}`);
+    })
     .then((json) => {
-      console.log('Результат', json);
+      console.log(json);
+    })
+    .catch(() => {
+      onFail();
     });
 };
 
@@ -85,4 +77,4 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export { getDataFromServer, sendDataToServer, showAlert, fetchPost };
+export { getDataFromServer, sendDataToServer, showAlert };

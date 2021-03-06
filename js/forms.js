@@ -10,6 +10,7 @@ const mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
 const adForm = document.querySelector('.ad-form');
 const adFormFieldsets = adForm.querySelectorAll('fieldset');
 const addressInputField = adForm.querySelector('input[name = "address"]');
+const adFormReset = adForm.querySelector('.ad-form__reset');
 
 // функция для перевода форм в активное состояние
 const enableForms = () => {
@@ -57,8 +58,24 @@ const addMoveEndListenerToMarker = (pinMarker) => {
 const addAdFormSubmitListener = (cb) => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    cb(evt);
+    cb(evt.target);
   });
 };
 
-export { enableForms, disableForms, initializeAddressInputField, addMoveEndListenerToMarker, addAdFormSubmitListener };
+// функция создания подписки на событие нажатия кнопки ОЧИСТИТЬ
+// Примечание: кнопка ОЧИСТИТЬ с типом reset и так без всяких обработчиков очистить форму подачи объявления,
+// но форма с фильтрами очищена не будет, так как это отдельная форма, поэтому нужна эта функция
+const addAdFormResetListener = () => {
+  adFormReset.addEventListener('click', () => {
+    mapFiltersForm.reset();
+  })
+};
+
+export {
+  enableForms,
+  disableForms,
+  initializeAddressInputField,
+  addMoveEndListenerToMarker,
+  addAdFormSubmitListener,
+  addAdFormResetListener
+};
