@@ -27,7 +27,7 @@ const getDataFromServer = (onSuccess, onFail) => {
 };
 
 // 2) Функция отправки данных на сервер
-const sendDataToServer = (onFail, form) => {
+const sendDataToServer = (onSuccess, onFail, form) => {
   fetch(
     'https://22.javascript.pages.academy/keksobooking',
     {
@@ -46,8 +46,8 @@ const sendDataToServer = (onFail, form) => {
 
       throw new Error(`${response.status} ${response.statusText}`);
     })
-    .then((json) => {
-      console.log(json);
+    .then(() => {
+      onSuccess();
     })
     .catch(() => {
       onFail();

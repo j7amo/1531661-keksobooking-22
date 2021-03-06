@@ -62,6 +62,12 @@ const addAdFormSubmitListener = (cb) => {
   });
 };
 
+// функция, которая сбрасывает формы в исходное состояние (пригодится нам в качестве коллбэка при успешной отправке формы)
+const resetForms = () => {
+  mapFiltersForm.reset();
+  adForm.reset();
+}
+
 // функция создания подписки на событие нажатия кнопки ОЧИСТИТЬ
 // Примечание: кнопка ОЧИСТИТЬ с типом reset и так без всяких обработчиков очистить форму подачи объявления,
 // но форма с фильтрами очищена не будет, так как это отдельная форма, поэтому нужна эта функция
@@ -77,5 +83,6 @@ export {
   initializeAddressInputField,
   addMoveEndListenerToMarker,
   addAdFormSubmitListener,
-  addAdFormResetListener
+  addAdFormResetListener,
+  resetForms
 };

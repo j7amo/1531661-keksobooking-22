@@ -5,7 +5,8 @@ import {
   initializeAddressInputField,
   addMoveEndListenerToMarker,
   addAdFormSubmitListener,
-  addAdFormResetListener
+  addAdFormResetListener,
+  resetForms
 } from './forms.js';
 import { initializeMap, addOffersMarkersToMap } from './map.js';
 import { createMapOfPopupsWithCoordinates } from './similar-objects.js';
@@ -20,9 +21,14 @@ map.whenReady(() => {
   initializeAddressInputField(mainPinMarker);
   addMoveEndListenerToMarker(mainPinMarker);
   addAdFormSubmitListener((form) => {
-    sendDataToServer(() => {
-      showAlert('Не удалось отправить форму. Попробуйте ещё раз');
-    }, form);
+    sendDataToServer(
+      () => {
+        resetForms();
+      },
+      () => {
+        showAlert('Не удалось отправить форму. Попробуйте ещё раз');
+      },
+      form);
   })
   getDataFromServer(
     (json) => {
