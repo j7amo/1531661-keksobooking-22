@@ -53,4 +53,12 @@ const addMoveEndListenerToMarker = (pinMarker) => {
   });
 };
 
-export { enableForms, disableForms, initializeAddressInputField, addMoveEndListenerToMarker };
+// функция создания подписки на событие submit формы подачи объявления
+const addAdFormSubmitListener = (cb) => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    cb(evt);
+  });
+};
+
+export { enableForms, disableForms, initializeAddressInputField, addMoveEndListenerToMarker, addAdFormSubmitListener };

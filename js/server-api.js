@@ -47,6 +47,21 @@ const sendDataToServer = (onSuccess, onFail, body) => {
     });
 };
 
+const fetchPost = () => {
+  fetch(
+    'https://22.javascript.pages.academy/keksobooking',
+    {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: new FormData(),
+    },
+  )
+    .then((response) => response.json())
+    .then((json) => {
+      console.log('Результат', json);
+    });
+};
+
 // при ошибке отправки / получения данных будем рендерить красную полоску
 // с текстом "При работе с сервером произошла ошибка"
 const showAlert = (message) => {
@@ -70,4 +85,4 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export { getDataFromServer, sendDataToServer, showAlert };
+export { getDataFromServer, sendDataToServer, showAlert, fetchPost };
