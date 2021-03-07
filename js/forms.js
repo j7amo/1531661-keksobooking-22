@@ -71,9 +71,10 @@ const resetForms = () => {
 // функция создания подписки на событие нажатия кнопки ОЧИСТИТЬ
 // Примечание: кнопка ОЧИСТИТЬ с типом reset и так без всяких обработчиков очистить форму подачи объявления,
 // но форма с фильтрами очищена не будет, так как это отдельная форма, поэтому нужна эта функция
-const addAdFormResetListener = () => {
+const addAdFormResetListener = (cb) => {
   adFormReset.addEventListener('click', () => {
     mapFiltersForm.reset();
+    cb();
   })
 };
 
