@@ -37,9 +37,6 @@ const sendDataToServer = (onSuccess, onFail, form) => {
     },
   )
     .then(response => {
-      console.log(response.ok);
-      console.log(response.status);
-      console.log(response.statusText);
       if (response.ok) {
         return response.json();
       }
@@ -77,4 +74,23 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export { getDataFromServer, sendDataToServer, showAlert };
+// при успешной отправке объявления будем рендерить соответствующее сообщение на странице согласно ТЗ
+const showSuccessMessage = () => {
+  const mainContainer = document.querySelector('main');
+  const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+  const successMessage = successMessageTemplate.cloneNode(true);
+  mainContainer.appendChild(successMessage);
+
+  // сразу при создании сообщения повесим на всё окно обработчик на click и Escape
+  // для того, чтобы пользователь мог скрыть сообщение
+  document.addEventListener('click', () => {
+    successMessage.remove();
+  });
+  document.addEventListener('keydown', (evt) => {
+    if(evt.key === 'Escape') {
+      successMessage.remove();
+    }
+  });
+};
+
+export { getDataFromServer, sendDataToServer, showAlert, showSuccessMessage };

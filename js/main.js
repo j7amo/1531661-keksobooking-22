@@ -10,7 +10,7 @@ import {
 } from './forms.js';
 import { initializeMap, addOffersMarkersToMap, resetMainPinMarker } from './map.js';
 import { createMapOfPopupsWithCoordinates } from './similar-objects.js';
-import {getDataFromServer, showAlert, sendDataToServer} from './server-api.js';
+import {getDataFromServer, sendDataToServer, showAlert, showSuccessMessage } from './server-api.js';
 
 // теперь попробуем собрать из этих кубиков работающую программу
 disableForms();
@@ -27,6 +27,7 @@ map.whenReady(() => {
   addAdFormSubmitListener((form) => {
     sendDataToServer(
       () => {
+        showSuccessMessage();
         resetForms();
         resetMainPinMarker();
         setTimeout(() =>
