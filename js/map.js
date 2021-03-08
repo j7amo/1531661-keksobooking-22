@@ -5,6 +5,23 @@
 // найдём элемент, в котором разместим карту
 const mapCanvas = document.querySelector('.map__canvas');
 
+const mainPinIcon = L.icon({
+  iconUrl: '../img/main-pin.svg',
+  iconSize: [52, 52],
+  iconAnchor: [26, 52],
+});
+
+const mainPinMarker = L.marker(
+  {
+    lat: 35.65283,
+    lng: 139.83947,
+  },
+  {
+    draggable: true,
+    icon: mainPinIcon,
+  },
+);
+
 // функция инициализации карты
 // По моей задумке эта функция делает следующее:
 // 1) создаёт объект карты
@@ -28,24 +45,7 @@ const initializeMap = () => {
     },
   )
     .addTo(map);
-
-  const mainPinIcon = L.icon({
-    iconUrl: '../img/main-pin.svg',
-    iconSize: [52, 52],
-    iconAnchor: [26, 52],
-  });
-
-  const mainPinMarker = L.marker(
-    {
-      lat: 35.65283,
-      lng: 139.83947,
-    },
-    {
-      draggable: true,
-      icon: mainPinIcon,
-    },
-  )
-    .addTo(map);
+  mainPinMarker.addTo(map);
 
   return [map, mainPinMarker];
 };
@@ -75,4 +75,14 @@ const addOffersMarkersToMap = (popupsWithCoordinates, map) => {
   });
 };
 
-export { initializeMap, addOffersMarkersToMap };
+// функция возврата главной метки  в исходное положение (понадобится в качестве коллбэка при успешной отправке формы)
+const resetMainPinMarker = () => {
+  mainPinMarker.setLatLng(
+    {
+      lat: 35.65283,
+      lng: 139.83947,
+    },
+  );
+};
+
+export { initializeMap, addOffersMarkersToMap, resetMainPinMarker };
