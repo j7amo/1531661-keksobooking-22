@@ -51,7 +51,7 @@ const setOfferTypeToPriceDependency = () => {
 // по ТЗ: «Время заезда», «Время выезда» — выбор опции одного поля автоматически изменят значение другого (они д.б. одинаковы)
 const setCheckOutToCheckInDependency = () => {
   offerCheckOutOptions.forEach((option) => {
-    if(option.value === offerCheckIn.value) {
+    if (option.value === offerCheckIn.value) {
       option.selected = true;
     }
   });
@@ -59,7 +59,7 @@ const setCheckOutToCheckInDependency = () => {
 
 const setCheckInToCheckOutDependency = () => {
   offerCheckInOptions.forEach((option) => {
-    if(option.value === offerCheckOut.value) {
+    if (option.value === offerCheckOut.value) {
       option.selected = true;
     }
   });
@@ -79,28 +79,28 @@ const setNumberOfRoomsCapacityDependency = () => {
   switch (Number(offerNumberOfRooms.value)) {
     case 1:
       offerCapacityOptions.forEach((option) => {
-        if(option.value !== '1') {
+        if (option.value !== '1') {
           option.disabled = true;
         }
       });
       break;
     case 2:
       offerCapacityOptions.forEach((option) => {
-        if(option.value !== '1' && option.value !== '2') {
+        if (option.value !== '1' && option.value !== '2') {
           option.disabled = true;
         }
       });
       break;
     case 3:
       offerCapacityOptions.forEach((option) => {
-        if(option.value !== '1' && option.value !== '2' && option.value !== '3') {
+        if (option.value !== '1' && option.value !== '2' && option.value !== '3') {
           option.disabled = true;
         }
       });
       break;
     case 100:
       offerCapacityOptions.forEach((option) => {
-        if(option.value !== '0') {
+        if (option.value !== '0') {
           option.disabled = true;
         }
       });

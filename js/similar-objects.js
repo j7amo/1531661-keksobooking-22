@@ -15,7 +15,7 @@ const isIncluded = (clonedFeature, generatedFeatures) => generatedFeatures.some(
 // если такого удобства в сгенерированном оффере нет - удаляем лишку нафиг
 const createFeatures = (clonedFeatures, generatedFeatures) => {
   clonedFeatures.forEach((clonedFeature) => {
-    if(!isIncluded(clonedFeature, generatedFeatures)) {
+    if (!isIncluded(clonedFeature, generatedFeatures)) {
       clonedFeature.remove();
     }
   });

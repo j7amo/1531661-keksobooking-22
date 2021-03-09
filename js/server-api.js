@@ -12,18 +12,14 @@ const getDataFromServer = (onSuccess, onFail) => {
     },
   )
     .then(response => {
-      if(response.ok) {
+      if (response.ok) {
         return response.json();
       }
 
       throw new Error(`${response.status} ${response.statusText}`);
     })
-    .then(json => {
-      return onSuccess(json);
-    })
-    .catch(err => {
-      onFail(err);
-    });
+    .then(json => onSuccess(json))
+    .catch(err => onFail(err));
 };
 
 // 2) Функция отправки данных на сервер
@@ -43,12 +39,8 @@ const sendDataToServer = (onSuccess, onFail, form) => {
 
       throw new Error(`${response.status} ${response.statusText}`);
     })
-    .then(() => {
-      onSuccess();
-    })
-    .catch(() => {
-      onFail();
-    });
+    .then(() => onSuccess())
+    .catch(() => onFail());
 };
 
 // при успешной отправке объявления будем рендерить соответствующее сообщение на странице согласно ТЗ
@@ -64,7 +56,7 @@ const showSuccessMessage = () => {
     successMessage.remove();
   });
   document.addEventListener('keydown', (evt) => {
-    if(evt.key === 'Escape') {
+    if (evt.key === 'Escape') {
       successMessage.remove();
     }
   });
@@ -84,7 +76,7 @@ const showFailMessage = () => {
     failMessage.remove();
   });
   document.addEventListener('keydown', (evt) => {
-    if(evt.key === 'Escape') {
+    if (evt.key === 'Escape') {
       failMessage.remove();
     }
   });

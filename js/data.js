@@ -54,7 +54,7 @@ const generateRentOffer = () => {
 const getGeneratedOffers = () => {
   const generatedOffers = [];
 
-  for(let i = 0; i < GENERATED_OBJECTS_COUNT; i++) {
+  for (let i = 0; i < GENERATED_OBJECTS_COUNT; i++) {
     generatedOffers.push(generateRentOffer());
   }
 

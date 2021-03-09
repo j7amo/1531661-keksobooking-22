@@ -11,12 +11,12 @@ import {
 } from './forms.js';
 import { initializeMap, addOffersMarkersToMap, resetMainPinMarker } from './map.js';
 import { createMapOfPopupsWithCoordinates } from './similar-objects.js';
-import {getDataFromServer, sendDataToServer, showAlert, showSuccessMessage, showFailMessage } from './server-api.js';
+import { getDataFromServer, sendDataToServer, showAlert, showSuccessMessage, showFailMessage } from './server-api.js';
 
 // теперь попробуем собрать из этих кубиков работающую программу
 initializeForms();
 disableForms();
-const[map, mainPinMarker] = initializeMap();
+const [map, mainPinMarker] = initializeMap();
 map.whenReady(() => {
   enableForms();
   addAdFormResetListener(() => {
@@ -35,19 +35,13 @@ map.whenReady(() => {
         setTimeout(() =>
           initializeAddressInputField(mainPinMarker), 0);
       },
-      () => {
-        showFailMessage();
-      },
+      () => showFailMessage(),
       form);
   });
   getDataFromServer(
-    (json) => {
-      return json;
-    },
-    () => {
-      showAlert('При получении данных с сервера произошла ошибка');
-    },
+    json => json,
+    () => showAlert('При получении данных с сервера произошла ошибка'),
   )
-    .then((json) => createMapOfPopupsWithCoordinates(json))
-    .then((popupsWithCoordinates) => addOffersMarkersToMap(popupsWithCoordinates, map));
+    .then(json => createMapOfPopupsWithCoordinates(json))
+    .then(popupsWithCoordinates => addOffersMarkersToMap(popupsWithCoordinates, map));
 });
