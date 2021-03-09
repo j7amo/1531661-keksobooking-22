@@ -8,6 +8,7 @@ const mapFiltersForm = document.querySelector('.map__filters');
 const mapFiltersSelects = mapFiltersForm.querySelectorAll('select');
 const mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
 const adForm = document.querySelector('.ad-form');
+const adFormTitle = adForm.querySelector('input[name="title"]');
 const adFormFieldsets = adForm.querySelectorAll('fieldset');
 const addressInputField = adForm.querySelector('input[name = "address"]');
 const adFormReset = adForm.querySelector('.ad-form__reset');
@@ -44,6 +45,7 @@ const numberOfRoomsCapacity = {
 const setOfferTypeToPriceDependency = () => {
   offerPrice.min = minOfferPrices[offerType.value];
   offerPrice.placeholder = minOfferPrices[offerType.value];
+  addInvalidFormFieldNumberEventListener(offerPrice, offerPrice.min, offerPrice.max);
 };
 
 // по ТЗ: «Время заезда», «Время выезда» — выбор опции одного поля автоматически изменят значение другого (они д.б. одинаковы)
@@ -106,6 +108,36 @@ const setNumberOfRoomsCapacityDependency = () => {
   }
 };
 
+// функция добавления обработчика события invalid на валидируемое ПО ДЛИНЕ поле
+const addInvalidFormFieldLengthEventListener = (field, minLength, maxLength) => {
+  field.addEventListener('invalid', () => {
+    if (field.validity.tooShort) {
+      field.setCustomValidity(`Введите минимум ${minLength} символа(ов)`);
+    } else if (field.validity.tooLong) {
+      field.setCustomValidity(`Введите максимум ${maxLength} символа(ов)`);
+    } else if (field.validity.valueMissing) {
+      field.setCustomValidity('Обязательное поле');
+    } else {
+      field.setCustomValidity('');
+    }
+  });
+};
+
+// функция добавления обработчика события invalid на валидируемое ПО ЧИСЛУ поле
+const addInvalidFormFieldNumberEventListener = (field, minNumber, maxNumber) => {
+  field.addEventListener('invalid', () => {
+    if (field.validity.rangeUnderflow) {
+      field.setCustomValidity(`Стоимость должна начинаться от ${minNumber}`);
+    } else if (field.validity.rangeOverflow) {
+      field.setCustomValidity(`Стоимость не должна превышать ${maxNumber}`);
+    } else if (field.validity.valueMissing) {
+      field.setCustomValidity('Обязательное поле');
+    } else {
+      field.setCustomValidity('');
+    }
+  });
+};
+
 // эта функция будет
 // - задавать начальные зависимости между полями (с помощью вызова дополнительных внутренних функций)
 // - подписываться на изменение этих полей для сохранения установленных зависимостей в процессе взаимодействия с формой
@@ -130,6 +162,8 @@ const initializeForms = () => {
   offerNumberOfRooms.addEventListener('change', () => {
     setNumberOfRoomsCapacityDependency();
   });
+
+  addInvalidFormFieldLengthEventListener(adFormTitle, adFormTitle.minLength, adFormTitle.maxLength);
 };
 
 // функция для перевода форм в активное состояние
