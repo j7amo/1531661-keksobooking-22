@@ -11,6 +11,126 @@ const adForm = document.querySelector('.ad-form');
 const adFormFieldsets = adForm.querySelectorAll('fieldset');
 const addressInputField = adForm.querySelector('input[name = "address"]');
 const adFormReset = adForm.querySelector('.ad-form__reset');
+const offerType = adForm.querySelector('select[name="type"]');
+const offerPrice = adForm.querySelector('input[name="price"]');
+const offerCheckIn = adForm.querySelector('select[name="timein"]');
+const offerCheckInOptions = offerCheckIn.querySelectorAll('option');
+const offerCheckOut = adForm.querySelector('select[name="timeout"]');
+const offerCheckOutOptions = offerCheckOut.querySelectorAll('option');
+const offerNumberOfRooms = adForm.querySelector('select[name="rooms"]');
+const offerCapacity = adForm.querySelector('select[name="capacity"]');
+const offerCapacityOptions = offerCapacity.querySelectorAll('option');
+
+// словарь "тип размещения - цена"
+const minOfferPrices = {
+  bungalow: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000,
+};
+
+// словарь "количество комнат - количество гостей"
+const numberOfRoomsCapacity = {
+  1: 1,
+  2: 2,
+  3: 3,
+  100: 0,
+};
+
+// напишем отдельные функции для установления зависимостей между полями
+// эти функции будем передавать в качестве коллбэков в функцию инициализации форм?
+
+// по ТЗ: «Тип жилья» — выбор опции меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь»
+const setOfferTypeToPriceDependency = () => {
+  offerPrice.min = minOfferPrices[offerType.value];
+  offerPrice.placeholder = minOfferPrices[offerType.value];
+};
+
+// по ТЗ: «Время заезда», «Время выезда» — выбор опции одного поля автоматически изменят значение другого (они д.б. одинаковы)
+const setCheckOutToCheckInDependency = () => {
+  offerCheckOutOptions.forEach((option) => {
+    if(option.value === offerCheckIn.value) {
+      option.selected = true;
+    }
+  });
+};
+
+const setCheckInToCheckOutDependency = () => {
+  offerCheckInOptions.forEach((option) => {
+    if(option.value === offerCheckOut.value) {
+      option.selected = true;
+    }
+  });
+};
+
+// по ТЗ: Поле «Количество комнат» синхронизировано с полем «Количество мест» таким образом,
+// что при выборе количества комнат вводятся ограничения на допустимые варианты выбора количества гостей:
+const setNumberOfRoomsCapacityDependency = () => {
+  offerCapacity.value = numberOfRoomsCapacity[offerNumberOfRooms.value];
+
+  // добавим перед каждым заходом в switch сброс аттрибута disabled в значение false, иначе на первом же шаге
+  // большая часть option'ов будет уже недоступна
+  offerCapacityOptions.forEach((option) => {
+    option.disabled = false;
+  })
+
+  switch (Number(offerNumberOfRooms.value)) {
+    case 1:
+      offerCapacityOptions.forEach((option) => {
+        if(option.value !== '1') {
+          option.disabled = true;
+        }
+      });
+      break;
+    case 2:
+      offerCapacityOptions.forEach((option) => {
+        if(option.value !== '1' && option.value !== '2') {
+          option.disabled = true;
+        }
+      });
+      break;
+    case 3:
+      offerCapacityOptions.forEach((option) => {
+        if(option.value !== '1' && option.value !== '2' && option.value !== '3') {
+          option.disabled = true;
+        }
+      });
+      break;
+    case 100:
+      offerCapacityOptions.forEach((option) => {
+        if(option.value !== '0') {
+          option.disabled = true;
+        }
+      });
+      break;
+  }
+};
+
+// эта функция будет
+// - задавать начальные зависимости между полями (с помощью вызова дополнительных внутренних функций)
+// - подписываться на изменение этих полей для сохранения установленных зависимостей в процессе взаимодействия с формой
+// + возможно проверять вводимые данные (но это не точно - может быть лучше проверку (валидацию) сделать отдельной функцией)
+const initializeForms = () => {
+  setOfferTypeToPriceDependency();
+  setCheckOutToCheckInDependency();
+  setNumberOfRoomsCapacityDependency();
+
+  offerType.addEventListener('change', () => {
+    setOfferTypeToPriceDependency();
+  });
+
+  offerCheckIn.addEventListener('change', () => {
+    setCheckOutToCheckInDependency();
+  });
+
+  offerCheckOut.addEventListener('change', () => {
+    setCheckInToCheckOutDependency();
+  });
+
+  offerNumberOfRooms.addEventListener('change', () => {
+    setNumberOfRoomsCapacityDependency();
+  });
+};
 
 // функция для перевода форм в активное состояние
 const enableForms = () => {
@@ -79,6 +199,7 @@ const addAdFormResetListener = (cb) => {
 };
 
 export {
+  initializeForms,
   enableForms,
   disableForms,
   initializeAddressInputField,

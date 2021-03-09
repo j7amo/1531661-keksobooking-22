@@ -1,5 +1,6 @@
 // точка входа, связывающая другие модули
 import {
+  initializeForms,
   enableForms,
   disableForms,
   initializeAddressInputField,
@@ -13,6 +14,7 @@ import { createMapOfPopupsWithCoordinates } from './similar-objects.js';
 import {getDataFromServer, sendDataToServer, showAlert, showSuccessMessage, showFailMessage } from './server-api.js';
 
 // теперь попробуем собрать из этих кубиков работающую программу
+initializeForms();
 disableForms();
 const[map, mainPinMarker] = initializeMap();
 map.whenReady(() => {
