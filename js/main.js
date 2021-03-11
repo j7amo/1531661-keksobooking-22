@@ -1,5 +1,7 @@
 // точка входа, связывающая другие модули
 import { getFixedLengthArrayOfRandomElements } from './util.js';
+import { addAvatarChangeListener } from './avatar.js';
+import { addPhotosChangeListener }from './adform-photos.js'
 import {
   initializeForms,
   enableAdForm,
@@ -26,6 +28,8 @@ disableForms();
 const [map, mainPinMarker] = initializeMap();
 map.whenReady(() => {
   enableAdForm();
+  addAvatarChangeListener();
+  addPhotosChangeListener();
   addAdFormResetListener(() => {
     resetMainPinMarker();
     setTimeout(() =>
