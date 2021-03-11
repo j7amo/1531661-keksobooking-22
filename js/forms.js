@@ -7,6 +7,7 @@
 const mapFiltersForm = document.querySelector('.map__filters');
 const mapFiltersSelects = mapFiltersForm.querySelectorAll('select');
 const mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
+const mapFiltersCheckboxes = mapFiltersFieldset.querySelectorAll('input');
 const adForm = document.querySelector('.ad-form');
 const adFormTitle = adForm.querySelector('input[name="title"]');
 const adFormFieldsets = adForm.querySelectorAll('fieldset');
@@ -166,12 +167,33 @@ const initializeForms = () => {
   addInvalidFormFieldLengthEventListener(adFormTitle, adFormTitle.minLength, adFormTitle.maxLength);
 };
 
-// функция для перевода форм в активное состояние
-const enableForms = () => {
+// функция для получения массива со значениями фильтров для меток
+const getFiltersValues = () => {
+  const filtersValues = [];
+
+  mapFiltersSelects.forEach((select) => {
+    filtersValues.push(select.value);
+  });
+
+  mapFiltersCheckboxes.forEach((input) => {
+    if (input.checked) {
+      filtersValues.push(input.value);
+    }
+  });
+
+  return filtersValues;
+}
+
+// функция для перевода формы подачи объявления в активное состояние
+const enableAdForm = () => {
   adForm.classList.remove('ad-form--disabled');
   adFormFieldsets.forEach((element) => {
     element.disabled = false;
   });
+};
+
+// функция для перевода формы с фильтрами меток в активное состояние
+const enableMapFiltersForm = () => {
   mapFiltersForm.classList.remove('map__filters--disabled');
   mapFiltersSelects.forEach((element) => {
     element.disabled = false;
@@ -216,6 +238,30 @@ const addAdFormSubmitListener = (cb) => {
   });
 };
 
+// функция создания подписки на событие change всем select'ам фильтров меток
+const addMapFilterSelectChangeListener = (cb) => {
+  mapFiltersSelects.forEach((select) => {
+    select.addEventListener('change', () => {
+      cb();
+    });
+  });
+};
+
+// функция создания подписки на событие change всем input'ам фильтров меток
+const addMapFilterInputChangeListener = (cb) => {
+  mapFiltersCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+      cb();
+    });
+  });
+};
+
+// общая функция создания подписки на изменение фильтров (чтобы в main.js использовать одну функцию вместо двух)
+const addMapFiltersChangeListener = (cb) => {
+  addMapFilterSelectChangeListener(cb);
+  addMapFilterInputChangeListener(cb);
+}
+
 // функция, которая сбрасывает формы в исходное состояние (пригодится нам в качестве коллбэка при успешной отправке формы)
 const resetForms = () => {
   mapFiltersForm.reset();
@@ -234,7 +280,10 @@ const addAdFormResetListener = (cb) => {
 
 export {
   initializeForms,
-  enableForms,
+  enableAdForm,
+  enableMapFiltersForm,
+  addMapFiltersChangeListener,
+  getFiltersValues,
   disableForms,
   initializeAddressInputField,
   addMoveEndListenerToMarker,
