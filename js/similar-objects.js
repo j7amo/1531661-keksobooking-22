@@ -86,63 +86,6 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
-// функция получения рейтинга объявлений (чем выше соответствие оффера заданным фильтрам,
-// тем выше его рейтинг и наоборот)
-// ПРИМЕЧАНИЕ: данная функция нужна для нестрогой фильтрации на основе рейтинга
-const getOfferRating = (offer, filtersValues) => {
-  let offerRating = 0;
-
-  // сначала начислим баллы за соответствие по select'ам
-  if (offer.offer.type === filtersValues[0]) {
-    offerRating += 2;
-  }
-
-  if (filtersValues[1] === 'low' && offer.offer.price < LOW_PRICE) {
-    offerRating += 3;
-  }
-
-  if (filtersValues[1] === 'middle' && (offer.offer.price >= LOW_PRICE && offer.offer.price < MIDDLE_PRICE)) {
-    offerRating += 3;
-  }
-
-  if (filtersValues[1] === 'high' && offer.offer.price >= MIDDLE_PRICE) {
-    offerRating += 3;
-  }
-
-  if (Number(filtersValues[2]) === offer.offer.rooms) {
-    offerRating += 1;
-  }
-
-  if (Number(filtersValues[3]) === offer.offer.guests) {
-    offerRating += 1;
-  }
-
-  // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса 4
-  if (filtersValues.length > 4) {
-    const features = filtersValues.slice(4);
-    features.forEach((feature) => {
-      if (offer.offer.features.includes(feature)) {
-        offerRating += 1;
-      }
-    });
-  }
-
-  return offerRating;
-};
-
-// немного "магии":
-// функция, которая отдаёт функцию (лол), которую для сортировки массива по рейтингу
-// мы потом должны передать в метод sort объекта Array
-// ПРИМЕЧАНИЕ: данная функция нужна для нестрогой фильтрации на основе рейтинга
-const getSortOffersFunction = (cb, filtersValues) => {
-  return (firstOffer, secondOffer) => {
-    const firstOfferRating = cb(firstOffer, filtersValues);
-    const secondOfferRating = cb(secondOffer, filtersValues);
-
-    return secondOfferRating - firstOfferRating;
-  };
-};
-
 // теперь напишем функцию для строгой фильтрации объявлений (то есть должно быть строгое соответствие фильтрам -
 // при любом несовпадении объявление НЕ выводится)
 const filterOffers = (offers, filtersValues) => {
@@ -202,4 +145,4 @@ const createMapOfPopupsWithCoordinates = (offers) => {
   return popupsWithCoordinates;
 };
 
-export { getOfferRating, getSortOffersFunction, filterOffers, createMapOfPopupsWithCoordinates };
+export { filterOffers, createMapOfPopupsWithCoordinates };

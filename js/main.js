@@ -49,8 +49,6 @@ map.whenReady(() => {
     (json) => {
       addMapFiltersChangeListener(() => {
         const filtersValues = getFiltersValues();
-        // пока оставил код для фильтрации с учётом рейтинга (закомментированная строка) до ответа авторов по ТЗ
-        // const sortedOffers = offers.sort(getSortOffersFunction(getOfferRating, filtersValues)).slice(0, OFFERS_COUNT);
         const filteredOffers = filterOffers(offers, filtersValues);
         const mapOfPopups = createMapOfPopupsWithCoordinates(filteredOffers);
         addOffersMarkersToMap(mapOfPopups, map);
