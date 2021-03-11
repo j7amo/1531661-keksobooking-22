@@ -1,3 +1,6 @@
+const LOW_PRICE = 10000;
+const MIDDLE_PRICE = 50000;
+
 const template = document.querySelector('#card').content.querySelector('.popup');
 
 // словарь видов размещения
@@ -83,6 +86,107 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
+// функция получения рейтинга объявлений (чем выше соответствие оффера заданным фильтрам,
+// тем выше его рейтинг и наоборот)
+// ПРИМЕЧАНИЕ: данная функция нужна для нестрогой фильтрации на основе рейтинга
+const getOfferRating = (offer, filtersValues) => {
+  let offerRating = 0;
+
+  // сначала начислим баллы за соответствие по select'ам
+  if (offer.offer.type === filtersValues[0]) {
+    offerRating += 2;
+  }
+
+  if (filtersValues[1] === 'low' && offer.offer.price < LOW_PRICE) {
+    offerRating += 3;
+  }
+
+  if (filtersValues[1] === 'middle' && (offer.offer.price >= LOW_PRICE && offer.offer.price < MIDDLE_PRICE)) {
+    offerRating += 3;
+  }
+
+  if (filtersValues[1] === 'high' && offer.offer.price >= MIDDLE_PRICE) {
+    offerRating += 3;
+  }
+
+  if (Number(filtersValues[2]) === offer.offer.rooms) {
+    offerRating += 1;
+  }
+
+  if (Number(filtersValues[3]) === offer.offer.guests) {
+    offerRating += 1;
+  }
+
+  // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса 4
+  if (filtersValues.length > 4) {
+    const features = filtersValues.slice(4);
+    features.forEach((feature) => {
+      if (offer.offer.features.includes(feature)) {
+        offerRating += 1;
+      }
+    });
+  }
+
+  return offerRating;
+};
+
+// немного "магии":
+// функция, которая отдаёт функцию (лол), которую для сортировки массива по рейтингу
+// мы потом должны передать в метод sort объекта Array
+// ПРИМЕЧАНИЕ: данная функция нужна для нестрогой фильтрации на основе рейтинга
+const getSortOffersFunction = (cb, filtersValues) => {
+  return (firstOffer, secondOffer) => {
+    const firstOfferRating = cb(firstOffer, filtersValues);
+    const secondOfferRating = cb(secondOffer, filtersValues);
+
+    return secondOfferRating - firstOfferRating;
+  };
+};
+
+// теперь напишем функцию для строгой фильтрации объявлений (то есть должно быть строгое соответствие фильтрам -
+// при любом несовпадении объявление НЕ выводится)
+const filterOffers = (offers, filtersValues) => {
+  return offers.filter((offer) => {
+    let hasAllFiltersValues = true;
+
+    if (filtersValues[0] !== 'any' && offer.offer.type !== filtersValues[0]) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[1] === 'low' && offer.offer.price > LOW_PRICE) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[1] === 'middle' && (offer.offer.price < LOW_PRICE || offer.offer.price > MIDDLE_PRICE)) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[1] === 'high' && offer.offer.price < MIDDLE_PRICE) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[2] !== 'any' && Number(filtersValues[2]) !== offer.offer.rooms) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[3] !== 'any' && Number(filtersValues[3]) > offer.offer.rooms) {
+      hasAllFiltersValues = false;
+    }
+
+    // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса 4
+    if (filtersValues.length > 4) {
+      const features = filtersValues.slice(4);
+      features.forEach((feature) => {
+        if (!offer.offer.features.includes(feature)) {
+          hasAllFiltersValues = false;
+        }
+      });
+    }
+
+    return hasAllFiltersValues;
+  });
+};
+
 // функция для создания попапов с координатами (источник данных может быть как сгенерирован на клиенте, так и получен с сервера)
 // Эта функция создаёт и возвращает мапу (объект типа Map), в которой
 // KEY = HTMLElement (сделанный на основе шаблона попап, готовый к добавлению в балун метки карты)
@@ -98,4 +202,4 @@ const createMapOfPopupsWithCoordinates = (offers) => {
   return popupsWithCoordinates;
 };
 
-export { createMapOfPopupsWithCoordinates };
+export { getOfferRating, getSortOffersFunction, filterOffers, createMapOfPopupsWithCoordinates };
