@@ -44,4 +44,17 @@ const getRandomLengthArray = (array) => {
   return randomLengthArrayElements;
 };
 
-export { getRandomInt, getRandomFloat, getRandomElement, getRandomLengthArray };
+const getFixedLengthArrayOfRandomElements = (array, elementsNumber) => {
+  const randomElements = [];
+
+  while(randomElements.length < elementsNumber) {
+    const randomElement = getRandomElement(array);
+
+    if (!randomElements.includes(randomElement)) {
+      randomElements.push(randomElement);
+    }
+  }
+  return randomElements;
+};
+
+export { getRandomInt, getRandomFloat, getRandomElement, getRandomLengthArray, getFixedLengthArrayOfRandomElements };
