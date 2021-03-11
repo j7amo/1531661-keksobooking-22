@@ -7,4 +7,19 @@ module.exports = {
     filename: 'main.bundle.js',
     path: path.resolve(__dirname, 'build/js'),
   },
+  /*module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        loader: 'file-loader',
+        options: {
+          outputPath: path.resolve(__dirname, 'build/'),
+        },
+      },
+    ],
+  }*/
 };

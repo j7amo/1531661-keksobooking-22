@@ -1,4 +1,5 @@
 // точка входа, связывающая другие модули
+import _ from 'lodash';
 import { getFixedLengthArrayOfRandomElements } from './util.js';
 import { addAvatarChangeListener } from './avatar.js';
 import { addPhotosChangeListener }from './adform-photos.js'
@@ -28,6 +29,7 @@ disableForms();
 const [map, mainPinMarker] = initializeMap();
 map.whenReady(() => {
   enableAdForm();
+  _.add();
   addAvatarChangeListener();
   addPhotosChangeListener();
   addAdFormResetListener(() => {
