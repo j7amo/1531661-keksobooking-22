@@ -5,8 +5,20 @@
 // найдём элемент, в котором разместим карту
 const mapCanvas = document.querySelector('.map__canvas');
 
+// заведём массив для хранения маркеров (меток) для того, чтобы из него брать метки для добавления их на карту
+// и в нужный момент очищать массив (пригодится при удалении меток с карты в контексте фильтрации объявлений)
+const additionalMarkers = [];
+
+// опишем главную метку
 const mainPinIcon = L.icon({
   iconUrl: '../img/main-pin.svg',
+  iconSize: [52, 52],
+  iconAnchor: [26, 52],
+});
+
+// опишем доп. метку
+const additionalPinIcon = L.icon({
+  iconUrl: '../img/pin.svg',
   iconSize: [52, 52],
   iconAnchor: [26, 52],
 });
@@ -32,7 +44,6 @@ const mainPinMarker = L.marker(
 // этот функционал по смыслу должен быть прописан в другом модуле - similar-objects.js)
 const initializeMap = () => {
   const map = L.map(mapCanvas)
-    // .on('load', () => isMapLoaded = true)
     .setView({
       lat: 35.65283,
       lng: 139.83947,
@@ -52,14 +63,17 @@ const initializeMap = () => {
 
 // функция добавления меток объявлений на карту
 const addOffersMarkersToMap = (popupsWithCoordinates, map) => {
-  const additionalPinIcon = L.icon({
-    iconUrl: '../img/pin.svg',
-    iconSize: [52, 52],
-    iconAnchor: [26, 52],
-  });
+
+  // добавим очистку меток перед нанесением на карту новых
+  if (additionalMarkers.length > 0) {
+    additionalMarkers.forEach((marker) => {
+      marker.remove();
+    })
+    additionalMarkers.length = 0;
+  }
 
   popupsWithCoordinates.forEach((value, key) => {
-    L.marker(
+    const marker = L.marker(
       {
         lat: value.lat,
         lng: value.lng,
@@ -68,10 +82,9 @@ const addOffersMarkersToMap = (popupsWithCoordinates, map) => {
         draggable: false,
         icon: additionalPinIcon,
       },
-    )
-      .addTo(map)
-      // биндим попап к метке
-      .bindPopup(key);
+    );
+    additionalMarkers.push(marker);
+    marker.addTo(map).bindPopup(key);
   });
 };
 
