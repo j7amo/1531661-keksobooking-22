@@ -2,7 +2,7 @@
 // здесь напишем функции для перевода форм в неактивное / активное состояния
 // импортируем объект карты для того, чтобы работать с формами с учётом состояния этого объекта
 // import { map, mainPinMarker } from './map.js';
-
+const FRACTION_DIGITS = 5;
 // найдём сначала нужные элементы в DOM'е
 const mapFiltersForm = document.querySelector('.map__filters');
 const mapFiltersSelects = mapFiltersForm.querySelectorAll('select');
@@ -46,7 +46,7 @@ const numberOfRoomsCapacity = {
 const setOfferTypeToPriceDependency = () => {
   offerPrice.min = minOfferPrices[offerType.value];
   offerPrice.placeholder = minOfferPrices[offerType.value];
-  addInvalidFormFieldNumberEventListener(offerPrice, offerPrice.min, offerPrice.max);
+  addInvalidFormFieldNumberHandler(offerPrice, offerPrice.min, offerPrice.max);
 };
 
 // по ТЗ: «Время заезда», «Время выезда» — выбор опции одного поля автоматически изменят значение другого (они д.б. одинаковы)
@@ -110,7 +110,7 @@ const setNumberOfRoomsCapacityDependency = () => {
 };
 
 // функция добавления обработчика события invalid на валидируемое ПО ДЛИНЕ поле
-const addInvalidFormFieldLengthEventListener = (field, minLength, maxLength) => {
+const addInvalidFormFieldLengthHandler = (field, minLength, maxLength) => {
   field.addEventListener('invalid', () => {
     if (field.validity.tooShort) {
       field.setCustomValidity(`Введите минимум ${minLength} символа(ов)`);
@@ -125,7 +125,7 @@ const addInvalidFormFieldLengthEventListener = (field, minLength, maxLength) => 
 };
 
 // функция добавления обработчика события invalid на валидируемое ПО ЧИСЛУ поле
-const addInvalidFormFieldNumberEventListener = (field, minNumber, maxNumber) => {
+const addInvalidFormFieldNumberHandler = (field, minNumber, maxNumber) => {
   field.addEventListener('invalid', () => {
     if (field.validity.rangeUnderflow) {
       field.setCustomValidity(`Стоимость должна начинаться от ${minNumber}`);
@@ -164,7 +164,7 @@ const initializeForms = () => {
     setNumberOfRoomsCapacityDependency();
   });
 
-  addInvalidFormFieldLengthEventListener(adFormTitle, adFormTitle.minLength, adFormTitle.maxLength);
+  addInvalidFormFieldLengthHandler(adFormTitle, adFormTitle.minLength, adFormTitle.maxLength);
 };
 
 // функция для получения массива со значениями фильтров для меток
@@ -217,21 +217,21 @@ const disableForms = () => {
 // функция для инициализации инпута с координатами (выношу в отдельную функцию, так как этот конкретный инпут имеет свою логику)
 const initializeAddressInputField = (mainPinMarker) => {
   addressInputField.readOnly = true;
-  const latitude = mainPinMarker.getLatLng().lat.toFixed(5);
-  const longitude = mainPinMarker.getLatLng().lng.toFixed(5);
+  const latitude = mainPinMarker.getLatLng().lat.toFixed(FRACTION_DIGITS);
+  const longitude = mainPinMarker.getLatLng().lng.toFixed(FRACTION_DIGITS);
   addressInputField.value = `${latitude}, ${longitude}`;
 };
 
 // функция подписки на событие moveend метки карты
-const addMoveEndListenerToMarker = (pinMarker) => {
+const addMarkerMoveEndHandler = (pinMarker) => {
   pinMarker.on('moveend', (evt) => {
     let newCoordinatesObject = evt.target.getLatLng();
-    addressInputField.value = `${newCoordinatesObject.lat.toFixed(5)}, ${newCoordinatesObject.lng.toFixed(5)}`;
+    addressInputField.value = `${newCoordinatesObject.lat.toFixed(FRACTION_DIGITS)}, ${newCoordinatesObject.lng.toFixed(FRACTION_DIGITS)}`;
   });
 };
 
 // функция создания подписки на событие submit формы подачи объявления
-const addAdFormSubmitListener = (cb) => {
+const addAdFormSubmitHandler = (cb) => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     cb(evt.target);
@@ -239,7 +239,7 @@ const addAdFormSubmitListener = (cb) => {
 };
 
 // функция создания подписки на событие change всем select'ам фильтров меток
-const addMapFilterSelectChangeListener = (cb) => {
+const addMapFilterSelectChangeHandler = (cb) => {
   mapFiltersSelects.forEach((select) => {
     select.addEventListener('change', () => {
       cb();
@@ -248,7 +248,7 @@ const addMapFilterSelectChangeListener = (cb) => {
 };
 
 // функция создания подписки на событие change всем input'ам фильтров меток
-const addMapFilterInputChangeListener = (cb) => {
+const addMapFilterInputChangeHandler = (cb) => {
   mapFiltersCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
       cb();
@@ -257,9 +257,9 @@ const addMapFilterInputChangeListener = (cb) => {
 };
 
 // общая функция создания подписки на изменение фильтров (чтобы в main.js использовать одну функцию вместо двух)
-const addMapFiltersChangeListener = (cb) => {
-  addMapFilterSelectChangeListener(cb);
-  addMapFilterInputChangeListener(cb);
+const addMapFiltersChangeHandler = (cb) => {
+  addMapFilterSelectChangeHandler(cb);
+  addMapFilterInputChangeHandler(cb);
 }
 
 // функция, которая сбрасывает формы в исходное состояние (пригодится нам в качестве коллбэка при успешной отправке формы)
@@ -271,7 +271,7 @@ const resetForms = () => {
 // функция создания подписки на событие нажатия кнопки ОЧИСТИТЬ
 // Примечание: кнопка ОЧИСТИТЬ с типом reset и так без всяких обработчиков очистить форму подачи объявления,
 // но форма с фильтрами очищена не будет, так как это отдельная форма, поэтому нужна эта функция
-const addAdFormResetListener = (cb) => {
+const addAdFormResetHandler = (cb) => {
   adFormReset.addEventListener('click', () => {
     mapFiltersForm.reset();
     cb();
@@ -282,12 +282,12 @@ export {
   initializeForms,
   enableAdForm,
   enableMapFiltersForm,
-  addMapFiltersChangeListener,
+  addMapFiltersChangeHandler,
   getFiltersValues,
   disableForms,
   initializeAddressInputField,
-  addMoveEndListenerToMarker,
-  addAdFormSubmitListener,
-  addAdFormResetListener,
+  addMarkerMoveEndHandler,
+  addAdFormSubmitHandler,
+  addAdFormResetHandler,
   resetForms
 };

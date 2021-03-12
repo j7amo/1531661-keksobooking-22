@@ -1,18 +1,19 @@
 // точка входа, связывающая другие модули
+import _ from 'lodash';
 import { getFixedLengthArrayOfRandomElements } from './util.js';
-import { addAvatarChangeListener } from './avatar.js';
-import { addPhotosChangeListener }from './adform-photos.js'
+import { addAvatarChangeHandler } from './avatar.js';
+import { addPhotosChangeHandler }from './adform-photos.js'
 import {
   initializeForms,
   enableAdForm,
   enableMapFiltersForm,
-  addMapFiltersChangeListener,
+  addMapFiltersChangeHandler,
   getFiltersValues,
   disableForms,
   initializeAddressInputField,
-  addMoveEndListenerToMarker,
-  addAdFormSubmitListener,
-  addAdFormResetListener,
+  addMarkerMoveEndHandler,
+  addAdFormSubmitHandler,
+  addAdFormResetHandler,
   resetForms
 } from './forms.js';
 import { initializeMap, addOffersMarkersToMap, resetMainPinMarker } from './map.js';
@@ -20,6 +21,8 @@ import { filterOffers, createMapOfPopupsWithCoordinates } from './similar-object
 import { getDataFromServer, sendDataToServer, showAlert, showSuccessMessage, showFailMessage } from './server-api.js';
 
 const OFFERS_COUNT = 10;
+const TIMEOUT = 0;
+const DEBOUNCE_DELAY = 500;
 let offers;
 
 // теперь попробуем собрать из этих кубиков работающую программу
@@ -28,35 +31,35 @@ disableForms();
 const [map, mainPinMarker] = initializeMap();
 map.whenReady(() => {
   enableAdForm();
-  addAvatarChangeListener();
-  addPhotosChangeListener();
-  addAdFormResetListener(() => {
+  addAvatarChangeHandler();
+  addPhotosChangeHandler();
+  addAdFormResetHandler(() => {
     resetMainPinMarker();
     setTimeout(() =>
-      initializeAddressInputField(mainPinMarker), 0);
+      initializeAddressInputField(mainPinMarker), TIMEOUT);
   });
   initializeAddressInputField(mainPinMarker);
-  addMoveEndListenerToMarker(mainPinMarker);
-  addAdFormSubmitListener((form) => {
+  addMarkerMoveEndHandler(mainPinMarker);
+  addAdFormSubmitHandler((form) => {
     sendDataToServer(
       () => {
         showSuccessMessage();
         resetForms();
         resetMainPinMarker();
         setTimeout(() =>
-          initializeAddressInputField(mainPinMarker), 0);
+          initializeAddressInputField(mainPinMarker), TIMEOUT);
       },
       () => showFailMessage(),
       form);
   });
   getDataFromServer(
     (json) => {
-      addMapFiltersChangeListener(() => {
+      addMapFiltersChangeHandler(_.debounce(() => {
         const filtersValues = getFiltersValues();
         const filteredOffers = filterOffers(offers, filtersValues);
         const mapOfPopups = createMapOfPopupsWithCoordinates(filteredOffers);
         addOffersMarkersToMap(mapOfPopups, map);
-      });
+      }, DEBOUNCE_DELAY));
       enableMapFiltersForm();
       return json;
     },

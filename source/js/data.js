@@ -2,6 +2,8 @@
 import { getRandomInt, getRandomFloat, getRandomElement, getRandomLengthArray } from './util.js';
 
 const GENERATED_OBJECTS_COUNT = 10;
+const USER_PIC_START_NUMBER = 1;
+const USER_PIC_END_NUMBER = 8;
 const OFFER_TITLE = 'Лучшее предложение по аренде недвижимости!';
 const MIN_PRICE = 1;
 const MIN_ROOMS = 1;
@@ -29,7 +31,7 @@ const generateRentOffer = () => {
 
   return {
     author: {
-      avatar: `img/avatars/user0${getRandomInt(1, 8)}.png`,
+      avatar: `img/avatars/user0${getRandomInt(USER_PIC_START_NUMBER, USER_PIC_END_NUMBER)}.png`,
     },
     offer: {
       title: OFFER_TITLE,

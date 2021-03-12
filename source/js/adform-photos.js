@@ -8,7 +8,7 @@ const fileChooser = document.querySelector('input[id="images"]');
 const preview = document.querySelector('.ad-form__photo');
 
 // напишем функцию для подписки на событие change input'а
-const addPhotosChangeListener = () => {
+const addPhotosChangeHandler = () => {
   fileChooser.addEventListener('change', () => {
     const file = fileChooser.files[0];
     const fileName = file.name.toLowerCase();
@@ -33,4 +33,4 @@ const addPhotosChangeListener = () => {
   });
 };
 
-export { addPhotosChangeListener };
+export { addPhotosChangeHandler };

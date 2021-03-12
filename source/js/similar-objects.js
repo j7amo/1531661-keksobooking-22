@@ -1,3 +1,8 @@
+const OFFER_TYPE_INDEX = 0;
+const OFFER_PRICE_INDEX = 1;
+const OFFER_ROOMS_INDEX = 2;
+const OFFER_GUESTS_INDEX = 3;
+const OFFER_FEATURES_START_INDEX = 4;
 const LOW_PRICE = 10000;
 const MIDDLE_PRICE = 50000;
 
@@ -92,33 +97,33 @@ const filterOffers = (offers, filtersValues) => {
   return offers.filter((offer) => {
     let hasAllFiltersValues = true;
 
-    if (filtersValues[0] !== 'any' && offer.offer.type !== filtersValues[0]) {
+    if (filtersValues[OFFER_TYPE_INDEX] !== 'any' && offer.offer.type !== filtersValues[OFFER_TYPE_INDEX]) {
       hasAllFiltersValues = false;
     }
 
-    if (filtersValues[1] === 'low' && offer.offer.price > LOW_PRICE) {
+    if (filtersValues[OFFER_PRICE_INDEX] === 'low' && offer.offer.price > LOW_PRICE) {
       hasAllFiltersValues = false;
     }
 
-    if (filtersValues[1] === 'middle' && (offer.offer.price < LOW_PRICE || offer.offer.price > MIDDLE_PRICE)) {
+    if (filtersValues[OFFER_PRICE_INDEX] === 'middle' && (offer.offer.price < LOW_PRICE || offer.offer.price > MIDDLE_PRICE)) {
       hasAllFiltersValues = false;
     }
 
-    if (filtersValues[1] === 'high' && offer.offer.price < MIDDLE_PRICE) {
+    if (filtersValues[OFFER_PRICE_INDEX] === 'high' && offer.offer.price < MIDDLE_PRICE) {
       hasAllFiltersValues = false;
     }
 
-    if (filtersValues[2] !== 'any' && Number(filtersValues[2]) !== offer.offer.rooms) {
+    if (filtersValues[OFFER_ROOMS_INDEX] !== 'any' && Number(filtersValues[OFFER_ROOMS_INDEX]) !== offer.offer.rooms) {
       hasAllFiltersValues = false;
     }
 
-    if (filtersValues[3] !== 'any' && Number(filtersValues[3]) > offer.offer.rooms) {
+    if (filtersValues[OFFER_GUESTS_INDEX] !== 'any' && Number(filtersValues[OFFER_GUESTS_INDEX]) > offer.offer.rooms) {
       hasAllFiltersValues = false;
     }
 
-    // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса 4
-    if (filtersValues.length > 4) {
-      const features = filtersValues.slice(4);
+    // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса OFFER_FEATURES_START_INDEX
+    if (filtersValues.length > OFFER_FEATURES_START_INDEX) {
+      const features = filtersValues.slice(OFFER_FEATURES_START_INDEX);
       features.forEach((feature) => {
         if (!offer.offer.features.includes(feature)) {
           hasAllFiltersValues = false;

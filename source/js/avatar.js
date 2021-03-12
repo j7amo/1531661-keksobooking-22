@@ -8,7 +8,7 @@ const fileChooser = document.querySelector('input[id="avatar"]');
 const preview = document.querySelector('.ad-form-header__preview img');
 
 // напишем функцию для подписки на событие change input'а
-const addAvatarChangeListener = () => {
+const addAvatarChangeHandler = () => {
   fileChooser.addEventListener('change', () => {
     const file = fileChooser.files[0];
     const fileName = file.name.toLowerCase();
@@ -29,4 +29,4 @@ const addAvatarChangeListener = () => {
   });
 };
 
-export { addAvatarChangeListener };
+export { addAvatarChangeHandler };
