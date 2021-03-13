@@ -3,11 +3,11 @@
 const isPositiveNumber = (number) => !isNaN(number) && number >= 0;
 
 const getRandomInt = (rangeStart = 0, rangeEnd = 0) => {
-  if(!isPositiveNumber(rangeStart) || !isPositiveNumber(rangeEnd)) {
+  if (!isPositiveNumber(rangeStart) || !isPositiveNumber(rangeEnd)) {
     return 0;
   }
 
-  if(rangeEnd <= rangeStart) {
+  if (rangeEnd <= rangeStart) {
     return rangeStart;
   }
 
@@ -15,11 +15,11 @@ const getRandomInt = (rangeStart = 0, rangeEnd = 0) => {
 };
 
 const getRandomFloat = (rangeStart = 0, rangeEnd = 0, digitsAfterPoint = 2) => {
-  if(!isPositiveNumber(rangeStart) || !isPositiveNumber(rangeEnd) || !isPositiveNumber(digitsAfterPoint)) {
+  if (!isPositiveNumber(rangeStart) || !isPositiveNumber(rangeEnd) || !isPositiveNumber(digitsAfterPoint)) {
     return 0;
   }
 
-  if(rangeEnd <= rangeStart) {
+  if (rangeEnd <= rangeStart) {
     return rangeStart;
   }
 
@@ -44,4 +44,17 @@ const getRandomLengthArray = (array) => {
   return randomLengthArrayElements;
 };
 
-export { getRandomInt, getRandomFloat, getRandomElement, getRandomLengthArray };
+const getFixedLengthArrayOfRandomElements = (array, elementsNumber) => {
+  const randomElements = [];
+
+  while(randomElements.length < elementsNumber) {
+    const randomElement = getRandomElement(array);
+
+    if (!randomElements.includes(randomElement)) {
+      randomElements.push(randomElement);
+    }
+  }
+  return randomElements;
+};
+
+export { getRandomInt, getRandomFloat, getRandomElement, getRandomLengthArray, getFixedLengthArrayOfRandomElements };

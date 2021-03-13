@@ -1,3 +1,11 @@
+const OFFER_TYPE_INDEX = 0;
+const OFFER_PRICE_INDEX = 1;
+const OFFER_ROOMS_INDEX = 2;
+const OFFER_GUESTS_INDEX = 3;
+const OFFER_FEATURES_START_INDEX = 4;
+const LOW_PRICE = 10000;
+const MIDDLE_PRICE = 50000;
+
 const template = document.querySelector('#card').content.querySelector('.popup');
 
 // словарь видов размещения
@@ -15,7 +23,7 @@ const isIncluded = (clonedFeature, generatedFeatures) => generatedFeatures.some(
 // если такого удобства в сгенерированном оффере нет - удаляем лишку нафиг
 const createFeatures = (clonedFeatures, generatedFeatures) => {
   clonedFeatures.forEach((clonedFeature) => {
-    if(!isIncluded(clonedFeature, generatedFeatures)) {
+    if (!isIncluded(clonedFeature, generatedFeatures)) {
       clonedFeature.remove();
     }
   });
@@ -83,6 +91,50 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
+// теперь напишем функцию для строгой фильтрации объявлений (то есть должно быть строгое соответствие фильтрам -
+// при любом несовпадении объявление НЕ выводится)
+const filterOffers = (offers, filtersValues) => {
+  return offers.filter((offer) => {
+    let hasAllFiltersValues = true;
+
+    if (filtersValues[OFFER_TYPE_INDEX] !== 'any' && offer.offer.type !== filtersValues[OFFER_TYPE_INDEX]) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[OFFER_PRICE_INDEX] === 'low' && offer.offer.price > LOW_PRICE) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[OFFER_PRICE_INDEX] === 'middle' && (offer.offer.price < LOW_PRICE || offer.offer.price > MIDDLE_PRICE)) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[OFFER_PRICE_INDEX] === 'high' && offer.offer.price < MIDDLE_PRICE) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[OFFER_ROOMS_INDEX] !== 'any' && Number(filtersValues[OFFER_ROOMS_INDEX]) !== offer.offer.rooms) {
+      hasAllFiltersValues = false;
+    }
+
+    if (filtersValues[OFFER_GUESTS_INDEX] !== 'any' && Number(filtersValues[OFFER_GUESTS_INDEX]) > offer.offer.rooms) {
+      hasAllFiltersValues = false;
+    }
+
+    // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса OFFER_FEATURES_START_INDEX
+    if (filtersValues.length > OFFER_FEATURES_START_INDEX) {
+      const features = filtersValues.slice(OFFER_FEATURES_START_INDEX);
+      features.forEach((feature) => {
+        if (!offer.offer.features.includes(feature)) {
+          hasAllFiltersValues = false;
+        }
+      });
+    }
+
+    return hasAllFiltersValues;
+  });
+};
+
 // функция для создания попапов с координатами (источник данных может быть как сгенерирован на клиенте, так и получен с сервера)
 // Эта функция создаёт и возвращает мапу (объект типа Map), в которой
 // KEY = HTMLElement (сделанный на основе шаблона попап, готовый к добавлению в балун метки карты)
@@ -98,4 +150,4 @@ const createMapOfPopupsWithCoordinates = (offers) => {
   return popupsWithCoordinates;
 };
 
-export { createMapOfPopupsWithCoordinates };
+export { filterOffers, createMapOfPopupsWithCoordinates };

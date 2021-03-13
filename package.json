@@ -3,7 +3,6 @@
   "version": "22.0.0",
   "private": true,
   "description": "Личный проект «Кексобукинг» от HTML Academy",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git@github.com:htmlacademy-javascript/1531661-keksobooking-22.git"
@@ -13,14 +12,23 @@
   },
   "devDependencies": {
     "browser-sync": "2.26.14",
+    "css-loader": "5.1.2",
     "eslint": "7.18.0",
-    "eslint-config-htmlacademy": "2.0.0"
+    "eslint-config-htmlacademy": "2.0.0",
+    "file-loader": "6.2.0",
+    "style-loader": "2.0.0",
+    "webpack": "5.24.4",
+    "webpack-cli": "4.5.0"
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "leaflet": "1.7.1",
+    "lodash": "4.17.21"
+  },
   "scripts": {
-    "start": "browser-sync start --server --no-ui --files \"js/**/*.js\"",
-    "test": "eslint js/"
+    "build": "webpack --mode production",
+    "start": "browser-sync start --server \"build/\" --no-ui --files \"source/**/*.js\"",
+    "test": "eslint source/js/"
   },
   "engines": {
     "node": ">=12.0.0"
