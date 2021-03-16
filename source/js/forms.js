@@ -1,9 +1,22 @@
-// это файл для работы с формами .ad-form и .map__filters
-// здесь напишем функции для перевода форм в неактивное / активное состояния
-// импортируем объект карты для того, чтобы работать с формами с учётом состояния этого объекта
-// import { map, mainPinMarker } from './map.js';
 const FRACTION_DIGITS = 5;
-// найдём сначала нужные элементы в DOM'е
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+const PREVIEW_IMAGE_WIDTH = '70px';
+const PREVIEW_IMAGE_HEIGHT = '70px';
+
+const minOfferPrices = {
+  bungalow: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000,
+};
+
+const numberOfRoomsCapacity = {
+  1: 1,
+  2: 2,
+  3: 3,
+  100: 0,
+};
+
 const mapFiltersForm = document.querySelector('.map__filters');
 const mapFiltersSelects = mapFiltersForm.querySelectorAll('select');
 const mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
@@ -22,34 +35,17 @@ const offerCheckOutOptions = offerCheckOut.querySelectorAll('option');
 const offerNumberOfRooms = adForm.querySelector('select[name="rooms"]');
 const offerCapacity = adForm.querySelector('select[name="capacity"]');
 const offerCapacityOptions = offerCapacity.querySelectorAll('option');
+const avatarChooser = adForm.querySelector('input[id="avatar"]');
+const avatarPreview = adForm.querySelector('.ad-form-header__preview img');
+const photosChooser = adForm.querySelector('input[id="images"]');
+const photosPreview = adForm.querySelector('.ad-form__photo');
 
-// словарь "тип размещения - цена"
-const minOfferPrices = {
-  bungalow: 0,
-  flat: 1000,
-  house: 5000,
-  palace: 10000,
-};
-
-// словарь "количество комнат - количество гостей"
-const numberOfRoomsCapacity = {
-  1: 1,
-  2: 2,
-  3: 3,
-  100: 0,
-};
-
-// напишем отдельные функции для установления зависимостей между полями
-// эти функции будем передавать в качестве коллбэков в функцию инициализации форм?
-
-// по ТЗ: «Тип жилья» — выбор опции меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь»
 const setOfferTypeToPriceDependency = () => {
   offerPrice.min = minOfferPrices[offerType.value];
   offerPrice.placeholder = minOfferPrices[offerType.value];
   addInvalidFormFieldNumberHandler(offerPrice, offerPrice.min, offerPrice.max);
 };
 
-// по ТЗ: «Время заезда», «Время выезда» — выбор опции одного поля автоматически изменят значение другого (они д.б. одинаковы)
 const setCheckOutToCheckInDependency = () => {
   offerCheckOutOptions.forEach((option) => {
     if (option.value === offerCheckIn.value) {
@@ -66,13 +62,8 @@ const setCheckInToCheckOutDependency = () => {
   });
 };
 
-// по ТЗ: Поле «Количество комнат» синхронизировано с полем «Количество мест» таким образом,
-// что при выборе количества комнат вводятся ограничения на допустимые варианты выбора количества гостей:
 const setNumberOfRoomsCapacityDependency = () => {
   offerCapacity.value = numberOfRoomsCapacity[offerNumberOfRooms.value];
-
-  // добавим перед каждым заходом в switch сброс аттрибута disabled в значение false, иначе на первом же шаге
-  // большая часть option'ов будет уже недоступна
   offerCapacityOptions.forEach((option) => {
     option.disabled = false;
   })
@@ -109,7 +100,6 @@ const setNumberOfRoomsCapacityDependency = () => {
   }
 };
 
-// функция добавления обработчика события invalid на валидируемое ПО ДЛИНЕ поле
 const addInvalidFormFieldLengthHandler = (field, minLength, maxLength) => {
   field.addEventListener('invalid', () => {
     if (field.validity.tooShort) {
@@ -124,7 +114,6 @@ const addInvalidFormFieldLengthHandler = (field, minLength, maxLength) => {
   });
 };
 
-// функция добавления обработчика события invalid на валидируемое ПО ЧИСЛУ поле
 const addInvalidFormFieldNumberHandler = (field, minNumber, maxNumber) => {
   field.addEventListener('invalid', () => {
     if (field.validity.rangeUnderflow) {
@@ -139,14 +128,13 @@ const addInvalidFormFieldNumberHandler = (field, minNumber, maxNumber) => {
   });
 };
 
-// эта функция будет
-// - задавать начальные зависимости между полями (с помощью вызова дополнительных внутренних функций)
-// - подписываться на изменение этих полей для сохранения установленных зависимостей в процессе взаимодействия с формой
-// + возможно проверять вводимые данные (но это не точно - может быть лучше проверку (валидацию) сделать отдельной функцией)
 const initializeForms = () => {
   setOfferTypeToPriceDependency();
   setCheckOutToCheckInDependency();
   setNumberOfRoomsCapacityDependency();
+
+  addImageUploadChangeHandler(avatarChooser, avatarPreview);
+  addImageUploadChangeHandler(photosChooser, photosPreview);
 
   offerType.addEventListener('change', () => {
     setOfferTypeToPriceDependency();
@@ -167,7 +155,6 @@ const initializeForms = () => {
   addInvalidFormFieldLengthHandler(adFormTitle, adFormTitle.minLength, adFormTitle.maxLength);
 };
 
-// функция для получения массива со значениями фильтров для меток
 const getFiltersValues = () => {
   const filtersValues = [];
 
@@ -184,7 +171,6 @@ const getFiltersValues = () => {
   return filtersValues;
 }
 
-// функция для перевода формы подачи объявления в активное состояние
 const enableAdForm = () => {
   adForm.classList.remove('ad-form--disabled');
   adFormFieldsets.forEach((element) => {
@@ -192,7 +178,6 @@ const enableAdForm = () => {
   });
 };
 
-// функция для перевода формы с фильтрами меток в активное состояние
 const enableMapFiltersForm = () => {
   mapFiltersForm.classList.remove('map__filters--disabled');
   mapFiltersSelects.forEach((element) => {
@@ -201,7 +186,6 @@ const enableMapFiltersForm = () => {
   mapFiltersFieldset.disabled = false;
 };
 
-// функция для перевода форм в неактивное состояние
 const disableForms = () => {
   adForm.classList.add('ad-form--disabled');
   adFormFieldsets.forEach((element) => {
@@ -214,7 +198,6 @@ const disableForms = () => {
   mapFiltersFieldset.disabled = true;
 };
 
-// функция для инициализации инпута с координатами (выношу в отдельную функцию, так как этот конкретный инпут имеет свою логику)
 const initializeAddressInputField = (mainPinMarker) => {
   addressInputField.readOnly = true;
   const latitude = mainPinMarker.getLatLng().lat.toFixed(FRACTION_DIGITS);
@@ -222,7 +205,6 @@ const initializeAddressInputField = (mainPinMarker) => {
   addressInputField.value = `${latitude}, ${longitude}`;
 };
 
-// функция подписки на событие moveend метки карты
 const addMarkerMoveEndHandler = (pinMarker) => {
   pinMarker.on('moveend', (evt) => {
     let newCoordinatesObject = evt.target.getLatLng();
@@ -230,15 +212,13 @@ const addMarkerMoveEndHandler = (pinMarker) => {
   });
 };
 
-// функция создания подписки на событие submit формы подачи объявления
 const addAdFormSubmitHandler = (cb) => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    cb(evt.target);
+    cb(adForm);
   });
 };
 
-// функция создания подписки на событие change всем select'ам фильтров меток
 const addMapFilterSelectChangeHandler = (cb) => {
   mapFiltersSelects.forEach((select) => {
     select.addEventListener('change', () => {
@@ -247,7 +227,6 @@ const addMapFilterSelectChangeHandler = (cb) => {
   });
 };
 
-// функция создания подписки на событие change всем input'ам фильтров меток
 const addMapFilterInputChangeHandler = (cb) => {
   mapFiltersCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
@@ -256,26 +235,54 @@ const addMapFilterInputChangeHandler = (cb) => {
   });
 };
 
-// общая функция создания подписки на изменение фильтров (чтобы в main.js использовать одну функцию вместо двух)
 const addMapFiltersChangeHandler = (cb) => {
   addMapFilterSelectChangeHandler(cb);
   addMapFilterInputChangeHandler(cb);
 }
 
-// функция, которая сбрасывает формы в исходное состояние (пригодится нам в качестве коллбэка при успешной отправке формы)
 const resetForms = () => {
   mapFiltersForm.reset();
   adForm.reset();
+  avatarPreview.src = 'img/muffin-grey.svg';
+  if (photosPreview.hasChildNodes()) {
+    photosPreview.innerHTML = '';
+  }
 }
 
-// функция создания подписки на событие нажатия кнопки ОЧИСТИТЬ
-// Примечание: кнопка ОЧИСТИТЬ с типом reset и так без всяких обработчиков очистить форму подачи объявления,
-// но форма с фильтрами очищена не будет, так как это отдельная форма, поэтому нужна эта функция
 const addAdFormResetHandler = (cb) => {
   adFormReset.addEventListener('click', () => {
-    mapFiltersForm.reset();
+    resetForms();
     cb();
   })
+};
+
+const addImageUploadChangeHandler = (fileChooser, preview) => {
+  fileChooser.addEventListener('change', () => {
+    const file = fileChooser.files[0];
+    const fileName = file.name.toLowerCase();
+
+    const hasExtensionMatch = FILE_TYPES.some((extension) => {
+      return fileName.endsWith(extension);
+    });
+
+    if (hasExtensionMatch) {
+      const reader = new FileReader();
+
+      reader.addEventListener('load', () => {
+        if (preview.tagName === 'IMG') {
+          preview.src = reader.result;
+        } else {
+          const previewImage = document.createElement('img');
+          previewImage.style.width = PREVIEW_IMAGE_WIDTH;
+          previewImage.style.height = PREVIEW_IMAGE_HEIGHT;
+          previewImage.src = reader.result;
+          preview.append(previewImage);
+        }
+      });
+
+      reader.readAsDataURL(file);
+    }
+  });
 };
 
 export {

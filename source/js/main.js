@@ -1,8 +1,6 @@
 // точка входа, связывающая другие модули
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
 import { getFixedLengthArrayOfRandomElements } from './util.js';
-import { addAvatarChangeHandler } from './avatar.js';
-import { addPhotosChangeHandler }from './adform-photos.js'
 import {
   initializeForms,
   enableAdForm,
@@ -31,8 +29,6 @@ disableForms();
 const [map, mainPinMarker] = initializeMap();
 map.whenReady(() => {
   enableAdForm();
-  addAvatarChangeHandler();
-  addPhotosChangeHandler();
   addAdFormResetHandler(() => {
     resetMainPinMarker();
     setTimeout(() =>
@@ -54,7 +50,7 @@ map.whenReady(() => {
   });
   getDataFromServer(
     (json) => {
-      addMapFiltersChangeHandler(_.debounce(() => {
+      addMapFiltersChangeHandler(debounce(() => {
         const filtersValues = getFiltersValues();
         const filteredOffers = filterOffers(offers, filtersValues);
         const mapOfPopups = createMapOfPopupsWithCoordinates(filteredOffers);
