@@ -1,8 +1,13 @@
 const ALERT_SHOW_TIME = 5000;
-const ZINDEX_NUMBER = 100;
-const ABSOLUTE_POSITION_LEFT = 0;
-const ABSOLUTE_POSITION_TOP = 0;
-const ABSOLUTE_POSITION_RIGHT = 0;
+const ALERT_ZINDEX = 100;
+const ALERT_POSITION = 'absolute';
+const ALERT_POSITION_LEFT = 0;
+const ALERT_POSITION_TOP = 0;
+const ALERT_POSITION_RIGHT = 0;
+const ALERT_PADDING = '10px 3px';
+const ALERT_FONTSIZE = '30px';
+const ALERT_TEXTALIGN = 'center';
+const ALERT_BACKGROUNDCOLOR = 'red';
 
 // Для взаимодействия с сервером напишем 2 отдельные функции
 // 1) Функция получения данных с сервера (она будет возвращать JSON - массив объектов)
@@ -92,15 +97,15 @@ const showFailMessage = () => {
 // с текстом "При работе с сервером произошла ошибка"
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
-  alertContainer.style.zIndex = ZINDEX_NUMBER;
-  alertContainer.style.position = 'absolute';
-  alertContainer.style.left = ABSOLUTE_POSITION_LEFT;
-  alertContainer.style.top = ABSOLUTE_POSITION_TOP;
-  alertContainer.style.right = ABSOLUTE_POSITION_RIGHT;
-  alertContainer.style.padding = '10px 3px';
-  alertContainer.style.fontSize = '30px';
-  alertContainer.style.textAlign = 'center';
-  alertContainer.style.backgroundColor = 'red';
+  alertContainer.style.zIndex = ALERT_ZINDEX;
+  alertContainer.style.position = ALERT_POSITION;
+  alertContainer.style.left = ALERT_POSITION_LEFT;
+  alertContainer.style.top = ALERT_POSITION_TOP;
+  alertContainer.style.right = ALERT_POSITION_RIGHT;
+  alertContainer.style.padding = ALERT_PADDING;
+  alertContainer.style.fontSize = ALERT_FONTSIZE;
+  alertContainer.style.textAlign = ALERT_TEXTALIGN;
+  alertContainer.style.backgroundColor = ALERT_BACKGROUNDCOLOR;
 
   alertContainer.textContent = message;
 
