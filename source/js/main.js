@@ -1,4 +1,3 @@
-// точка входа, связывающая другие модули
 import debounce from 'lodash/debounce';
 import { getFixedLengthArrayOfRandomElements } from './util.js';
 import {
@@ -23,7 +22,6 @@ const TIMEOUT = 0;
 const DEBOUNCE_DELAY = 500;
 let offers;
 
-// теперь попробуем собрать из этих кубиков работающую программу
 initializeForms();
 disableForms();
 const [map, mainPinMarker] = initializeMap();
