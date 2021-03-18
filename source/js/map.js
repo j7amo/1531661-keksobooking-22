@@ -1,5 +1,4 @@
 /* global L:readonly */
-// в этом модуле будем писать функции по работе с картой и связанными с ней объектами
 const MAIN_PIN_WIDTH = 52;
 const MAIN_PIN_HEIGHT = 52;
 const ADDITIONAL_PIN_WIDTH = 52;
@@ -7,21 +6,16 @@ const ADDITIONAL_PIN_HEIGHT = 52;
 const MAIN_PIN_LATITUDE = 35.65283;
 const MAIN_PIN_LONGITUDE = 139.83947;
 const MAP_ZOOM_LEVEL = 9;
-// найдём элемент, в котором разместим карту
 const mapCanvas = document.querySelector('.map__canvas');
 
-// заведём массив для хранения маркеров (меток) для того, чтобы из него брать метки для добавления их на карту
-// и в нужный момент очищать массив (пригодится при удалении меток с карты в контексте фильтрации объявлений)
 const additionalMarkers = [];
 
-// опишем главную метку
 const mainPinIcon = L.icon({
   iconUrl: '../img/main-pin.svg',
   iconSize: [MAIN_PIN_WIDTH, MAIN_PIN_HEIGHT],
   iconAnchor: [MAIN_PIN_WIDTH / 2, MAIN_PIN_HEIGHT],
 });
 
-// опишем доп. метку
 const additionalPinIcon = L.icon({
   iconUrl: '../img/pin.svg',
   iconSize: [ADDITIONAL_PIN_WIDTH, ADDITIONAL_PIN_HEIGHT],
@@ -39,14 +33,6 @@ const mainPinMarker = L.marker(
   },
 );
 
-// функция инициализации карты
-// По моей задумке эта функция делает следующее:
-// 1) создаёт объект карты
-// 2) создаёт слой карты с изображением и копирайтом
-// 3) размещает на карте главную метку
-// 4) возвращает массив с нужными нам для дальнейшей работы объектами (карта, главная метка и т.д.)
-// таким образом потребитель данной функции (разработчик) при её вызове получает рабочую карту (без меток объявлений, так как
-// этот функционал по смыслу должен быть прописан в другом модуле - similar-objects.js)
 const initializeMap = () => {
   const map = L.map(mapCanvas)
     .setView({
@@ -66,10 +52,7 @@ const initializeMap = () => {
   return [map, mainPinMarker];
 };
 
-// функция добавления меток объявлений на карту
 const addOffersMarkersToMap = (popupsWithCoordinates, map) => {
-
-  // добавим очистку меток перед нанесением на карту новых
   if (additionalMarkers.length > 0) {
     additionalMarkers.forEach((marker) => {
       marker.remove();
@@ -93,7 +76,6 @@ const addOffersMarkersToMap = (popupsWithCoordinates, map) => {
   });
 };
 
-// функция возврата главной метки  в исходное положение (понадобится в качестве коллбэка при успешной отправке формы)
 const resetMainPinMarker = () => {
   mainPinMarker.setLatLng(
     {
