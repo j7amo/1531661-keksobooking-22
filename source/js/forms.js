@@ -11,10 +11,10 @@ const minOfferPrices = {
 };
 
 const numberOfRoomsCapacity = {
-  1: 1,
-  2: 2,
-  3: 3,
-  100: 0,
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0],
 };
 
 const mapFiltersForm = document.querySelector('.map__filters');
@@ -34,7 +34,6 @@ const offerCheckOut = adForm.querySelector('select[name="timeout"]');
 const offerCheckOutOptions = offerCheckOut.querySelectorAll('option');
 const offerNumberOfRooms = adForm.querySelector('select[name="rooms"]');
 const offerCapacity = adForm.querySelector('select[name="capacity"]');
-const offerCapacityOptions = offerCapacity.querySelectorAll('option');
 const avatarChooser = adForm.querySelector('input[id="avatar"]');
 const avatarPreview = adForm.querySelector('.ad-form-header__preview img');
 const photosChooser = adForm.querySelector('input[id="images"]');
@@ -63,42 +62,12 @@ const setCheckInToCheckOutDependency = () => {
 };
 
 const setNumberOfRoomsCapacityDependency = () => {
-  offerCapacity.value = numberOfRoomsCapacity[offerNumberOfRooms.value];
-  offerCapacityOptions.forEach((option) => {
-    option.disabled = false;
+  const value = Number(offerNumberOfRooms.value);
+  [...offerCapacity.options].forEach((option) => {
+    option.disabled = !numberOfRoomsCapacity[value].includes(Number(option.value));
   })
-
-  switch (Number(offerNumberOfRooms.value)) {
-    case 1:
-      offerCapacityOptions.forEach((option) => {
-        if (option.value !== '1') {
-          option.disabled = true;
-        }
-      });
-      break;
-    case 2:
-      offerCapacityOptions.forEach((option) => {
-        if (option.value !== '1' && option.value !== '2') {
-          option.disabled = true;
-        }
-      });
-      break;
-    case 3:
-      offerCapacityOptions.forEach((option) => {
-        if (option.value !== '1' && option.value !== '2' && option.value !== '3') {
-          option.disabled = true;
-        }
-      });
-      break;
-    case 100:
-      offerCapacityOptions.forEach((option) => {
-        if (option.value !== '0') {
-          option.disabled = true;
-        }
-      });
-      break;
-  }
-};
+  offerCapacity.value = value > 3 ? '0' : value;
+}
 
 const addInvalidFormFieldLengthHandler = (field, minLength, maxLength) => {
   field.addEventListener('invalid', () => {
