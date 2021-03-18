@@ -1,5 +1,3 @@
-// модуль с утилитарными функциями
-
 const isPositiveNumber = (number) => !isNaN(number) && number >= 0;
 
 const getRandomInt = (rangeStart = 0, rangeEnd = 0) => {
