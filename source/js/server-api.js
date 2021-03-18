@@ -9,8 +9,6 @@ const ALERT_FONTSIZE = '30px';
 const ALERT_TEXTALIGN = 'center';
 const ALERT_BACKGROUNDCOLOR = 'red';
 
-// Для взаимодействия с сервером напишем 2 отдельные функции
-// 1) Функция получения данных с сервера (она будет возвращать JSON - массив объектов)
 const getDataFromServer = (onSuccess, onFail) => {
   return fetch(
     'https://22.javascript.pages.academy/keksobooking/data',
@@ -30,7 +28,6 @@ const getDataFromServer = (onSuccess, onFail) => {
     .catch(err => onFail(err));
 };
 
-// 2) Функция отправки данных на сервер
 const sendDataToServer = (onSuccess, onFail, form) => {
   fetch(
     'https://22.javascript.pages.academy/keksobooking',
@@ -51,15 +48,12 @@ const sendDataToServer = (onSuccess, onFail, form) => {
     .catch(() => onFail());
 };
 
-// при успешной отправке объявления будем рендерить соответствующее сообщение на странице согласно ТЗ
 const showSuccessMessage = () => {
   const mainContainer = document.querySelector('main');
   const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
   const successMessage = successMessageTemplate.cloneNode(true);
   mainContainer.appendChild(successMessage);
 
-  // сразу при создании сообщения повесим на всё окно обработчик на click и Escape
-  // для того, чтобы пользователь мог скрыть сообщение
   document.addEventListener('click', () => {
     successMessage.remove();
   });
@@ -70,7 +64,6 @@ const showSuccessMessage = () => {
   });
 };
 
-// при неудачной отправке объявления будем рендерить соответствующее сообщение на странице согласно ТЗ
 const showFailMessage = () => {
   const mainContainer = document.querySelector('main');
   const failMessageTemplate = document.querySelector('#error').content.querySelector('.error');
@@ -78,8 +71,6 @@ const showFailMessage = () => {
   const errorButton = failMessage.querySelector('.error__button');
   mainContainer.appendChild(failMessage);
 
-  // сразу при создании сообщения повесим на всё окно обработчик на click и Escape, а также на click по специальной кнопке
-  // для того, чтобы пользователь мог скрыть сообщение
   document.addEventListener('click', () => {
     failMessage.remove();
   });
@@ -93,8 +84,6 @@ const showFailMessage = () => {
   });
 };
 
-// при ошибке получения данных будем рендерить красную полоску
-// с текстом "При работе с сервером произошла ошибка"
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = ALERT_ZINDEX;

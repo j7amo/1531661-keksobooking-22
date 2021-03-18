@@ -16,11 +16,8 @@ const offerTypes = {
   palace: 'Дворец',
 };
 
-// функция для проверки присутствия элемента массива удобств в классах элемента списка popup__features
 const isIncluded = (clonedFeature, generatedFeatures) => generatedFeatures.some((element) => clonedFeature.className.includes(`--${element}`));
 
-// функция для проверки элементов списка popup__features
-// если такого удобства в сгенерированном оффере нет - удаляем лишку нафиг
 const createFeatures = (clonedFeatures, generatedFeatures) => {
   clonedFeatures.forEach((clonedFeature) => {
     if (!isIncluded(clonedFeature, generatedFeatures)) {
@@ -29,7 +26,6 @@ const createFeatures = (clonedFeatures, generatedFeatures) => {
   });
 };
 
-// функция для создания элемента img с правильным src
 const createPhotos = (photosContainer, photoTemplate, photos) => {
   const fragment = document.createDocumentFragment();
 
@@ -43,7 +39,6 @@ const createPhotos = (photosContainer, photoTemplate, photos) => {
   photosContainer.append(fragment);
 };
 
-// функция для создания попапа
 const createPopup = (template, offer) => {
   const popup = template.cloneNode(true);
   const popupTitle = popup.querySelector('.popup__title');
@@ -91,8 +86,6 @@ const createPopup = (template, offer) => {
   return popup;
 };
 
-// теперь напишем функцию для строгой фильтрации объявлений (то есть должно быть строгое соответствие фильтрам -
-// при любом несовпадении объявление НЕ выводится)
 const filterOffers = (offers, filtersValues) => {
   return offers.filter((offer) => {
     const { type, price, rooms, guests, features } = offer.offer;
@@ -126,7 +119,6 @@ const filterOffers = (offers, filtersValues) => {
       hasAllFiltersValues = false;
     }
 
-    // далее проверим наличие удобств (удобства в массиве значений фильтров начинаются с индекса OFFER_FEATURES_START_INDEX
     if (filtersValues.length > OFFER_FEATURES_START_INDEX) {
       const localFeatures = filtersValues.slice(OFFER_FEATURES_START_INDEX);
       localFeatures.forEach((feature) => {
@@ -140,10 +132,6 @@ const filterOffers = (offers, filtersValues) => {
   });
 };
 
-// функция для создания попапов с координатами (источник данных может быть как сгенерирован на клиенте, так и получен с сервера)
-// Эта функция создаёт и возвращает мапу (объект типа Map), в которой
-// KEY = HTMLElement (сделанный на основе шаблона попап, готовый к добавлению в балун метки карты)
-// VALUE = объект с координатами, которые мы используем для правильного размещения меток объявлений на карте
 const createMapOfPopupsWithCoordinates = (offers) => {
   const popupsWithCoordinates = new Map();
   offers.forEach((offer) => {
