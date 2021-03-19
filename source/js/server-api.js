@@ -1,9 +1,9 @@
 const ALERT_SHOW_TIME = 5000;
-const ALERT_ZINDEX = 100;
+const ALERT_ZINDEX = '100';
 const ALERT_POSITION = 'absolute';
-const ALERT_POSITION_LEFT = 0;
-const ALERT_POSITION_TOP = 0;
-const ALERT_POSITION_RIGHT = 0;
+const ALERT_POSITION_LEFT = '0';
+const ALERT_POSITION_TOP = '0';
+const ALERT_POSITION_RIGHT = '0';
 const ALERT_PADDING = '10px 3px';
 const ALERT_FONTSIZE = '30px';
 const ALERT_TEXTALIGN = 'center';

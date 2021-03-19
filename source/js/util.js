@@ -12,34 +12,8 @@ const getRandomInt = (rangeStart = 0, rangeEnd = 0) => {
   return Number(rangeStart) + Math.round(Math.random() * (rangeEnd - rangeStart));
 };
 
-const getRandomFloat = (rangeStart = 0, rangeEnd = 0, digitsAfterPoint = 2) => {
-  if (!isPositiveNumber(rangeStart) || !isPositiveNumber(rangeEnd) || !isPositiveNumber(digitsAfterPoint)) {
-    return 0;
-  }
-
-  if (rangeEnd <= rangeStart) {
-    return rangeStart;
-  }
-
-  return (Number(rangeStart) + Math.random() * (rangeEnd - rangeStart)).toFixed(digitsAfterPoint);
-};
-
 const getRandomElement = (array) => {
   return array[getRandomInt(0, array.length - 1)];
-};
-
-const getRandomLengthArray = (array) => {
-  const randomLengthArrayElements = [];
-  const randomLength = getRandomInt(1, array.length);
-
-  while(randomLengthArrayElements.length < randomLength) {
-    const randomElement = getRandomElement(array);
-
-    if (!randomLengthArrayElements.includes(randomElement)) {
-      randomLengthArrayElements.push(randomElement);
-    }
-  }
-  return randomLengthArrayElements;
 };
 
 const getFixedLengthArrayOfRandomElements = (array, elementsNumber) => {
@@ -55,4 +29,4 @@ const getFixedLengthArrayOfRandomElements = (array, elementsNumber) => {
   return randomElements;
 };
 
-export { getRandomInt, getRandomFloat, getRandomElement, getRandomLengthArray, getFixedLengthArrayOfRandomElements };
+export { getRandomInt, getRandomElement, getFixedLengthArrayOfRandomElements };
